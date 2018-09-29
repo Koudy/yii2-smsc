@@ -1,0 +1,38 @@
+{
+  "name": "koudy/yii2-smsc",
+  "description": "",
+  "type": "yii2-extension",
+  "keywords": [
+    "yii2",
+    "sms",
+    "smsc",
+    "api"
+  ],
+  "require": {
+    "yiisoft/yii2": "2.0.14",
+    "php": ">=7.1.0",
+    "guzzlehttp/guzzle": "^6.3.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7",
+    "fzaninotto/faker": "^1.8.0"
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test-win": "vendor\\bin\\phpunit.bat"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "koudy\\yii2\\smsc\\": "./src"
+    }
+  },
+  "extra": {
+    "bootstrap": "koudy\\yii2\\smsc\\Bootstrap"
+  }
+}
