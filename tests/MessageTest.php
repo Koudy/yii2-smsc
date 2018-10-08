@@ -1,14 +1,14 @@
 <?php
 
 use koudy\yii2\smsc\Message;
-use koudy\yii2\smsc\interfaces\Message as MessageInterface;
+use yii\base\Component;
 
 class MessageTest extends \PHPUnit\Framework\TestCase
 {
-	public function testInterface()
+	public function testInheritance()
 	{
-		$message = new Message();
-		$this->assertInstanceOf(MessageInterface::class, $message);
+		$sender = new Message();
+		$this->assertInstanceOf(Component::class, $sender);
 	}
 
 	public function testSetGetPhones()

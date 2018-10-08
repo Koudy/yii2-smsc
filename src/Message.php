@@ -2,7 +2,9 @@
 
 namespace koudy\yii2\smsc;
 
-class Message implements interfaces\Message
+use yii\base\Component;
+
+class Message extends Component
 {
 	/**
 	 * @var string|array
@@ -15,7 +17,7 @@ class Message implements interfaces\Message
 	private $text;
 
 	/**
-	 * @inheritdoc
+	 * @param $phones
 	 */
 	public function setPhones($phones): void
 	{
@@ -23,7 +25,7 @@ class Message implements interfaces\Message
 	}
 
 	/**
-	 * @inheritdoc
+	 * @return array|string
 	 */
 	public function getPhones()
 	{
@@ -31,7 +33,7 @@ class Message implements interfaces\Message
 	}
 
 	/**
-	 * @inheritdoc
+	 * @param string $text
 	 */
 	public function setText(string $text): void
 	{
@@ -39,7 +41,7 @@ class Message implements interfaces\Message
 	}
 
 	/**
-	 * @inheritdoc
+	 * @return string
 	 */
 	public function getText(): string
 	{

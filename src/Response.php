@@ -4,7 +4,7 @@ namespace koudy\yii2\smsc;
 
 use yii\base\Component;
 
-class Response extends Component implements interfaces\Response
+class Response extends Component
 {
 	/**
 	 * @var string
@@ -17,7 +17,7 @@ class Response extends Component implements interfaces\Response
 	public $count;
 
 	/**
-	 * @inheritdoc
+	 * @return null|string
 	 */
 	public function getId(): ?string
 	{
@@ -25,7 +25,7 @@ class Response extends Component implements interfaces\Response
 	}
 
 	/**
-	 * @inheritdoc
+	 * @return int|null
 	 */
 	public function getCount(): ?int
 	{

@@ -2,43 +2,35 @@
 
 namespace koudy\yii2\smsc;
 
-class Request implements interfaces\Request
+use yii\base\Component;
+
+class Request extends Component
 {
 	const RESPONSE_JSON_FORMAT = 3;
 
 	/**
 	 * @var string|array
 	 */
-	private $phones;
+	public $phones;
 
 	/**
 	 * @var string
 	 */
-	private $text;
+	public $text;
 
 	/**
 	 * @var string
 	 */
-	private $login;
+	public $login;
 
 	/**
 	 * @var string
 	 */
-	private $password;
+	public $password;
 
-	public function __construct(
-		$phones,
-		string $text,
-		string $login,
-		string $password
-	)
-	{
-		$this->phones = $phones;
-		$this->text = $text;
-		$this->login = $login;
-		$this->password = $password;
-	}
-
+	/**
+	 * @return array
+	 */
 	public function getRequestParams(): array
 	{
 		if (is_array($this->phones)) {

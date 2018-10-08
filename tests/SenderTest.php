@@ -1,44 +1,18 @@
 <?php
 
 use koudy\yii2\smsc\Sender;
-use koudy\yii2\smsc\interfaces\Client;
-use koudy\yii2\smsc\interfaces\Message;
-use koudy\yii2\smsc\interfaces\Parser;
-use koudy\yii2\smsc\interfaces\Request;
-use koudy\yii2\smsc\interfaces\RequestFactory;
-use koudy\yii2\smsc\interfaces\ResponseFactory;
-use koudy\yii2\smsc\interfaces\Response;
-use koudy\yii2\smsc\interfaces\Sender as SenderInterface;
+use koudy\yii2\smsc\Client;
+use koudy\yii2\smsc\Message;
+use koudy\yii2\smsc\Parser;
+use koudy\yii2\smsc\Request;
+use koudy\yii2\smsc\Response;
 use yii\base\Component;
 
 class SenderTest extends \PHPUnit\Framework\TestCase
 {
-	public function testCreateWithYiiCreateObject()
-	{
-		Yii::$container->set(RequestFactory::class, \koudy\yii2\smsc\RequestFactory::class);
-		Yii::$container->set(Client::class, \koudy\yii2\smsc\Client::class);
-		Yii::$container->set(Parser::class, \koudy\yii2\smsc\Parser::class);
-		Yii::$container->set(ResponseFactory::class, \koudy\yii2\smsc\ResponseFactory::class);
-
-	    $sender = Yii::createObject(Sender::class);
-	    $this->assertInstanceOf(SenderInterface::class, $sender);
-	}
-
-	public function testInterface()
-	{
-	    $sender = new Sender(
-		    $this->createMock(RequestFactory::class),
-		    $this->createMock(Client::class)
-	    );
-	    $this->assertInstanceOf(SenderInterface::class, $sender);
-	}
-
     public function testInheritance()
     {
-    	$sender = new Sender(
-		    $this->createMock(RequestFactory::class),
-		    $this->createMock(Client::class)
-	    );
+    	$sender = new Sender();
         $this->assertInstanceOf(Component::class, $sender);
     }
 
@@ -50,28 +24,42 @@ class SenderTest extends \PHPUnit\Framework\TestCase
 		$login = '::login::';
 		$password = '::password::';
 
+		$url = '::url::';
+
 		$message = $this->createMock(Message::class);
 		$message->method('getPhones')->willReturn($phones);
 		$message->method('getText')->willReturn($text);
+
 		$request = $this->createMock(Request::class);
-
-		$requestFactory = $this->createMock(RequestFactory::class);
-		$requestFactory
-			->method('create')
-			->with($phones, $text, $login, $password)
-			->willReturn($request);
-
 		$response = $this->createMock(Response::class);
 
 		$client = $this->createMock(Client::class);
-		$client->method('sendRequest')->with($request)->willReturn($response);
+		$client->method('sendRequest')->with($url, $request)->willReturn($response);
 
-		$config = [
+		$requestConfig = [
 			'login' => $login,
-			'password' => $password
+			'password' => $password,
+			'text' => $text,
+			'phones' => $phones
 		];
 
-		$sender = new Sender($requestFactory, $client, $config);
+		$container = $this->createMock(yii\di\Container::class);
+		$container
+			->expects(self::once())
+			->method('get')
+			->with(Request::class, $requestConfig)
+			->willReturn($request);
+
+		Yii::$container = $container;
+
+		$senderConfig = [
+			'login' => $login,
+			'password' => $password,
+			'url' => $url,
+			'client' => $client
+		];
+
+		$sender = new Sender($senderConfig);
 
 		$this->assertSame($response, $sender->send($message));
 	}

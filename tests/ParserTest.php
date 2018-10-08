@@ -1,14 +1,14 @@
 <?php
 
 use koudy\yii2\smsc\Parser;
-use koudy\yii2\smsc\interfaces\Parser as ParserInterface;
+use yii\base\Component;
 
 class ParserTest extends \PHPUnit\Framework\TestCase
 {
-	public function testInterface()
+	public function testInheritance()
 	{
-	    $parser = new Parser();
-	    $this->assertInstanceOf(ParserInterface::class, $parser);
+		$sender = new Parser();
+		$this->assertInstanceOf(Component::class, $sender);
 	}
 
 	public function testParse()

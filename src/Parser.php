@@ -2,10 +2,13 @@
 
 namespace koudy\yii2\smsc;
 
-class Parser implements interfaces\Parser
+use yii\base\Component;
+
+class Parser extends Component
 {
 	/**
-	 * @inheritdoc
+	 * @param string $rawData
+	 * @return array
 	 */
 	public function parse(string $rawData): array
 	{

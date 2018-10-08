@@ -2,26 +2,22 @@
 
 use GuzzleHttp\Client as GuzzleClient;
 use koudy\yii2\smsc\Client;
-use koudy\yii2\smsc\interfaces\Client as ClientInterface;
-use koudy\yii2\smsc\interfaces\Parser;
-use koudy\yii2\smsc\interfaces\Request;
-use koudy\yii2\smsc\interfaces\Response;
-use koudy\yii2\smsc\interfaces\ResponseFactory;
+use koudy\yii2\smsc\Parser;
+use koudy\yii2\smsc\Request;
+use koudy\yii2\smsc\Response;
+use yii\base\Component;
 
 class ClientTest extends \PHPUnit\Framework\TestCase
 {
-	public function testInterface()
+	public function testInheritance()
 	{
-	    $client = new Client(
-		    $this->createMock(GuzzleClient::class),
-		    $this->createMock(Parser::class),
-		    $this->createMock(ResponseFactory::class)
-	    );
-	    $this->assertInstanceOf(ClientInterface::class, $client);
+		$sender = new Client();
+		$this->assertInstanceOf(Component::class, $sender);
 	}
 
 	public function testSendRequest()
 	{
+		$url = '::url::';
 		$requestParams = ['::params::'];
 		$rawResponse = '::raw response::';
 		$request = $this->createMock(Request::class);
@@ -45,7 +41,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
 		$guzzleClient
 			->expects(self::once())
 			->method('request')
-			->with('POST', 'https://smsc.ru/sys/send.php', $guzzleRequestParams)
+			->with('POST', $url, $guzzleRequestParams)
 			->willReturn($guzzleResponse);
 
 		$response = $this->createMock(Response::class);
@@ -53,11 +49,22 @@ class ClientTest extends \PHPUnit\Framework\TestCase
 		$parser = $this->createMock(Parser::class);
 		$parser->method('parse')->with($rawResponse)->willReturn($parsedResponse);
 
-		$responseFactory = $this->createMock(ResponseFactory::class);
-		$responseFactory->method('create')->with($parsedResponse)->willReturn($response);
+		$container = $this->createMock(yii\di\Container::class);
+		$container
+			->expects(self::once())
+			->method('get')
+			->with(Response::class, $parsedResponse)
+			->willReturn($response);
 
-		$client = new Client($guzzleClient, $parser, $responseFactory);
+		Yii::$container = $container;
 
-		$this->assertSame($response, $client->sendRequest($request));
+		$clientConfig = [
+			'guzzleClient' => $guzzleClient,
+			'parser' => $parser
+		];
+
+		$client = new Client($clientConfig);
+
+		$this->assertSame($response, $client->sendRequest($url, $request));
 	}
 }

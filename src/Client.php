@@ -3,56 +3,37 @@
 namespace koudy\yii2\smsc;
 
 use GuzzleHttp\Client as GuzzleClient;
-use koudy\yii2\smsc\interfaces\Request;
-use koudy\yii2\smsc\interfaces\Parser;
-use koudy\yii2\smsc\interfaces\Response;
-use koudy\yii2\smsc\interfaces\ResponseFactory;
+use Yii;
+use yii\base\Component;
 
-class Client implements interfaces\Client
+class Client extends Component
 {
-	const URL = 'https://smsc.ru/sys/send.php';
 	/**
 	 * @var GuzzleClient
 	 */
-	private $guzzleClient;
+	public $guzzleClient;
 
 	/**
 	 * @var Parser
 	 */
-	private $parser;
+	public $parser;
 
 	/**
-	 * @var ResponseFactory
+	 * @param string $url
+	 * @param Request $request
+	 * @return Response
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 * @throws \yii\base\InvalidConfigException
+	 * @throws \yii\di\NotInstantiableException
 	 */
-	private $responseFactory;
-
-	/**
-	 * @param GuzzleClient $guzzleClient
-	 * @param Parser $parser
-	 * @param ResponseFactory $responseFactory
-	 */
-	public function __construct(
-		GuzzleClient $guzzleClient,
-		Parser $parser,
-		ResponseFactory $responseFactory
-	)
+	public function sendRequest(string $url, Request $request): Response
 	{
-		$this->guzzleClient = $guzzleClient;
-		$this->parser = $parser;
-		$this->responseFactory = $responseFactory;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	public function sendRequest(Request $request): Response
-	{
-		$guzzleResponse = $this->guzzleClient->request('POST', self::URL, [
+		$guzzleResponse = $this->guzzleClient->request('POST', $url, [
 			'form_params' => $request->getRequestParams()
 		]);
 
 		$parsedResponse = $this->parser->parse($guzzleResponse->getBody()->getContents());
 
-		return $this->responseFactory->create($parsedResponse);
+		return Yii::$container->get(Response::class, $parsedResponse);
 	}
 }

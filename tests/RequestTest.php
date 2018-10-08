@@ -1,30 +1,34 @@
 <?php
 
 use koudy\yii2\smsc\Request;
-use koudy\yii2\smsc\interfaces\Request as RequestInterface;
+use yii\base\Component;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
-	public function testInterface()
+	public function testInheritance()
 	{
-		$request = $this
-			->getMockBuilder(Request::class)
-			->disableOriginalConstructor()
-			->getMock();
-		$this->assertInstanceOf(RequestInterface::class, $request);
+		$sender = new Request();
+		$this->assertInstanceOf(Component::class, $sender);
 	}
 
 	public function testGetRequestParamsWhenOnlyOnePhone()
 	{
-		$phones = '::phones::';
-		$text = '::text::';
-
 		$login = '::login::';
 		$password = '::password::';
 
+		$phones = '::phones::';
+		$text = '::text::';
+
 		$responseJsonFormat = 3;
 
-		$request = new Request($phones, $text, $login, $password);
+		$config = [
+			'login' => $login,
+			'password' => $password,
+			'text' => $text,
+			'phones' => $phones
+		];
+
+		$request = new Request($config);
 
 		$requestParams = [
 			'login' => $login,
@@ -47,7 +51,14 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
 		$responseJsonFormat = 3;
 
-		$request = new Request($phones, $text, $login, $password);
+		$config = [
+			'login' => $login,
+			'password' => $password,
+			'text' => $text,
+			'phones' => $phones
+		];
+
+		$request = new Request($config);
 
 		$requestParams = [
 			'login' => $login,

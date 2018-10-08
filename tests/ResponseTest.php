@@ -1,14 +1,14 @@
 <?php
 
 use koudy\yii2\smsc\Response;
-use koudy\yii2\smsc\interfaces\Response as ResponseInterface;
+use yii\base\Component;
 
 class ResponseTest extends \PHPUnit\Framework\TestCase
 {
-	public function testInterface()
+	public function testInheritance()
 	{
-		$response = new Response();
-		$this->assertInstanceOf(ResponseInterface::class, $response);
+		$sender = new Response();
+		$this->assertInstanceOf(Component::class, $sender);
 	}
 
 	public function testCreate()

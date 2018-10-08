@@ -31,8 +31,5 @@
     "psr-4": {
       "koudy\\yii2\\smsc\\": "./src"
     }
-  },
-  "extra": {
-    "bootstrap": "koudy\\yii2\\smsc\\Bootstrap"
   }
 }

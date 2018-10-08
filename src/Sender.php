@@ -2,24 +2,15 @@
 
 namespace koudy\yii2\smsc;
 
-use koudy\yii2\smsc\interfaces\Client;
-use koudy\yii2\smsc\interfaces\Message;
-use koudy\yii2\smsc\interfaces\RequestFactory;
-use koudy\yii2\smsc\interfaces\Response;
-
+use Yii;
 use yii\base\Component;
 
-class Sender extends Component implements interfaces\Sender
+class Sender extends Component
 {
-	/**
-	 * @var RequestFactory
-	 */
-	private $requestFactory;
-
 	/**
 	 * @var Client
 	 */
-	private $client;
+	public $client;
 
 	/**
 	 * @var string
@@ -29,37 +20,31 @@ class Sender extends Component implements interfaces\Sender
 	/**
 	 * @var string
 	 */
+	public $url;
+
+	/**
+	 * @var string
+	 */
 	public $password;
 
 	/**
-	 * @param RequestFactory $requestFactory
-	 * @param Client $client
-	 * @param array $config
-	 */
-	public function __construct(
-		RequestFactory $requestFactory,
-		Client $client,
-		array $config = []
-	)
-	{
-		$this->requestFactory = $requestFactory;
-		$this->client = $client;
-
-		parent::__construct($config);
-	}
-
-	/**
-	 * @inheritdoc
+	 * @param Message $message
+	 * @return Response
+	 * @throws \GuzzleHttp\Exception\GuzzleException
+	 * @throws \yii\base\InvalidConfigException
+	 * @throws \yii\di\NotInstantiableException
 	 */
 	public function send(Message $message): Response
 	{
-		$request = $this->requestFactory->create(
-			$message->getPhones(),
-			$message->getText(),
-			$this->login,
-			$this->password
-		);
+		$requestConfig = [
+			'login' => $this->login,
+			'password' => $this->password,
+			'phones' => $message->getPhones(),
+			'text' =>$message->getText()
+		];
 
-		return $this->client->sendRequest($request);
+		$request = Yii::$container->get(Request::class, $requestConfig);
+
+		return $this->client->sendRequest($this->url, $request);
 	}
 }
