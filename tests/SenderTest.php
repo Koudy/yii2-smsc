@@ -3,8 +3,8 @@
 use koudy\yii2\smsc\Sender;
 use koudy\yii2\smsc\Client;
 use koudy\yii2\smsc\Message;
-use koudy\yii2\smsc\Parser;
 use koudy\yii2\smsc\Request;
+use koudy\yii2\smsc\RequestFactory;
 use koudy\yii2\smsc\Response;
 use yii\base\Component;
 
@@ -12,60 +12,127 @@ class SenderTest extends \PHPUnit\Framework\TestCase
 {
     public function testInheritance()
     {
-    	$sender = new Sender();
+        $sender = $this->createMock(Sender::class);
         $this->assertInstanceOf(Component::class, $sender);
     }
 
-	public function testSend()
-	{
-		$phones = ['::phones::'];
-		$text = '::text::';
+    /**
+     * @expectedException \yii\base\InvalidConfigException
+     * @expectedExceptionMessage Wrong Client.
+     */
+    public function testCreateWhenWrongClient()
+    {
+        new Sender($this->createMock(RequestFactory::class), ['client' => new Stdclass()]);
+    }
 
-		$login = '::login::';
-		$password = '::password::';
+    /**
+     * @expectedException \yii\base\InvalidConfigException
+     * @expectedExceptionMessage The "url" property must be set.
+     */
+    public function testCreateWhenEmptyUrl()
+    {
+        new Sender(
+            $this->createMock(RequestFactory::class),
+            [
+                'client' => $this->createMock(Client::class),
+                'url' => ''
+            ]
+        );
+    }
 
-		$url = '::url::';
+    /**
+     * @expectedException \yii\base\InvalidConfigException
+     * @expectedExceptionMessage The "login" property must be set.
+     */
+    public function testCreateWhenEmptyLogin()
+    {
+        new Sender(
+            $this->createMock(RequestFactory::class),
+            [
+                'client' => $this->createMock(Client::class),
+                'url' => '::some url::',
+                'login' => ''
+            ]
+        );
+    }
 
-		$message = $this->createMock(Message::class);
-		$message->method('getPhones')->willReturn($phones);
-		$message->method('getText')->willReturn($text);
+    /**
+     * @expectedException \yii\base\InvalidConfigException
+     * @expectedExceptionMessage The "password" property must be set.
+     */
+    public function testCreateWhenEmptyPassword()
+    {
+        new Sender(
+            $this->createMock(RequestFactory::class),
+            [
+                'client' => $this->createMock(Client::class),
+                'url' => '::some url::',
+                'login' => '::some login::',
+                'password' => ''
+            ]
+        );
+    }
 
-		$request = $this->createMock(Request::class);
-		$response = $this->createMock(Response::class);
+    public function testUrl()
+    {
+        $sender = $this->createMock(Sender::class);
+        $this->assertEquals('https://smsc.ru/sys/send.php', $sender->url);
+    }
 
-		$client = $this->createMock(Client::class);
-		$client->method('sendRequest')->with($url, $request)->willReturn($response);
+    public function testSend()
+    {
+        $phone = '::phone::';
+        $text = '::text::';
 
-		$requestConfig = [
-			'login' => $login,
-			'password' => $password,
-			'text' => $text,
-			'phones' => $phones
-		];
+        $login = '::login::';
+        $password = '::password::';
 
-		$container = $this->createMock(yii\di\Container::class);
-		$container
-			->expects(self::once())
-			->method('get')
-			->with(Request::class, $requestConfig)
-			->willReturn($request);
+        $url = '::url::';
 
-		Yii::$container = $container;
+        $message = $this->createMock(Message::class);
+        $message->method('getPhone')->willReturn($phone);
+        $message->method('getText')->willReturn($text);
+        $message->method('validate')->willReturn(true);
 
-		$senderConfig = [
-			'login' => $login,
-			'password' => $password,
-			'url' => $url,
-			'client' => $client
-		];
+        $request = $this->createMock(Request::class);
 
-		$sender = new Sender($senderConfig);
+        $requestFactory = $this->createMock(RequestFactory::class);
+        $requestFactory
+            ->method('create')
+            ->with($phone, $text, $login, $password)
+            ->willReturn($request);
 
-		$this->assertSame($response, $sender->send($message));
-	}
+        $response = $this->createMock(Response::class);
 
-	private function getFaker()
-	{
-		return Faker\Factory::create();
-	}
+        $client = $this->createMock(Client::class);
+        $client->method('sendRequest')->with($url, $request)->willReturn($response);
+
+        $senderConfig = [
+            'login' => $login,
+            'password' => $password,
+            'url' => $url,
+            'client' => $client
+        ];
+
+        $sender = new Sender($requestFactory, $senderConfig);
+
+        $this->assertSame($response, $sender->send($message));
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Validation failed.
+     */
+    public function testSendWhenMessageValidationIsFailed()
+    {
+        $message = $this->createMock(Message::class);
+        $message->method('validate')->willReturn(false);
+
+        $sender = $this
+            ->getMockBuilder(Sender::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['send'])
+            ->getMock();
+        $sender->send($message);
+    }
 }

@@ -1,12 +1,13 @@
 <?php
 
 use koudy\yii2\smsc\Request;
+use koudy\yii2\smsc\RequestFactory;
 
-class RequestTest extends \PHPUnit\Framework\TestCase
+class RequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetRequestParamsWhenOnlyOnePhone()
+    public function testCreate()
     {
-        $phone = '::phone::';
+        $phone = '::phones::';
         $text = '::text::';
 
         $login = '::login::';
@@ -14,7 +15,10 @@ class RequestTest extends \PHPUnit\Framework\TestCase
 
         $responseJsonFormat = 3;
 
-        $request = new Request($phone, $text, $login, $password);
+        $factory = new RequestFactory();
+        $request = $factory->create($phone, $text, $login, $password);
+
+        $this->assertInstanceOf(Request::class, $request);
 
         $requestParams = [
             'login' => $login,

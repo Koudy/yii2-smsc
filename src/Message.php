@@ -2,49 +2,58 @@
 
 namespace koudy\yii2\smsc;
 
-use yii\base\Component;
+use mikk150\phonevalidator\PhoneNumberValidator;
+use yii\base\Model;
 
-class Message extends Component
+class Message extends Model
 {
-	/**
-	 * @var string|array
-	 */
-	private $phones;
+    /**
+     * @var string|array
+     */
+    private $phone;
 
-	/**
-	 * @var string
-	 */
-	private $text;
+    /**
+     * @var string
+     */
+    private $text;
 
-	/**
-	 * @param $phones
-	 */
-	public function setPhones($phones): void
-	{
-		$this->phones = $phones;
-	}
+    public function rules()
+    {
+        return [
+            ['phone', 'required'],
+            ['phone', PhoneNumberValidator::class, 'country' => 'RU']
+        ];
+    }
 
-	/**
-	 * @return array|string
-	 */
-	public function getPhones()
-	{
-		return $this->phones;
-	}
+    /**
+     * @param $phone
+     */
+    public function setPhone($phone): void
+    {
+        $this->phone = $phone;
+    }
 
-	/**
-	 * @param string $text
-	 */
-	public function setText(string $text): void
-	{
-		$this->text = $text;
-	}
+    /**
+     * @return array|string
+     */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getText(): string
-	{
-		return $this->text;
-	}
+    /**
+     * @param string $text
+     */
+    public function setText(string $text): void
+    {
+        $this->text = $text;
+    }
+
+    /**
+     * @return string
+     */
+    public function getText(): string
+    {
+        return $this->text;
+    }
 }

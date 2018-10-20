@@ -2,49 +2,51 @@
 
 namespace koudy\yii2\smsc;
 
-use yii\base\Component;
-
-class Request extends Component
+class Request
 {
-	const RESPONSE_JSON_FORMAT = 3;
+    const RESPONSE_JSON_FORMAT = 3;
 
-	/**
-	 * @var string|array
-	 */
-	public $phones;
+    /**
+     * @var string
+     */
+    private $phone;
 
-	/**
-	 * @var string
-	 */
-	public $text;
+    /**
+     * @var string
+     */
+    private $text;
 
-	/**
-	 * @var string
-	 */
-	public $login;
+    /**
+     * @var string
+     */
+    private $login;
 
-	/**
-	 * @var string
-	 */
-	public $password;
+    /**
+     * @var string
+     */
+    private $password;
 
-	/**
-	 * @return array
-	 */
-	public function getRequestParams(): array
-	{
-		if (is_array($this->phones)) {
-			$phones = implode(',', $this->phones);
-		} else {
-			$phones = $this->phones;
-		}
+    public function __construct(
+        $phone,
+        string $text,
+        string $login,
+        string $password
+    )
+    {
+        $this->phone = $phone;
+        $this->text = $text;
+        $this->login = $login;
+        $this->password = $password;
+    }
 
-		return [
-			'login' => $this->login,
-			'psw' => $this->password,
-			'phones' => $phones,
-			'mes' => $this->text,
-			'fmt' => self::RESPONSE_JSON_FORMAT
-		];
-	}
+    public function getRequestParams(): array
+    {
+        return [
+            'login' => $this->login,
+            'psw' => $this->password,
+            'phones' => $this->phone,
+            'mes' => $this->text,
+            'fmt' => self::RESPONSE_JSON_FORMAT
+        ];
+    }
 }

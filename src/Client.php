@@ -8,32 +8,52 @@ use yii\base\Component;
 
 class Client extends Component
 {
-	/**
-	 * @var GuzzleClient
-	 */
-	public $guzzleClient;
+    /**
+     * @var ResponseFactory
+     */
+    private $responseFactory;
 
-	/**
-	 * @var Parser
-	 */
-	public $parser;
+    /**
+     * @var GuzzleClient
+     */
+    public $guzzleClient;
 
-	/**
-	 * @param string $url
-	 * @param Request $request
-	 * @return Response
-	 * @throws \GuzzleHttp\Exception\GuzzleException
-	 * @throws \yii\base\InvalidConfigException
-	 * @throws \yii\di\NotInstantiableException
-	 */
-	public function sendRequest(string $url, Request $request): Response
-	{
-		$guzzleResponse = $this->guzzleClient->request('POST', $url, [
-			'form_params' => $request->getRequestParams()
-		]);
+    /**
+     * @var Parser
+     */
+    public $parser;
 
-		$parsedResponse = $this->parser->parse($guzzleResponse->getBody()->getContents());
+    /**
+     * Client constructor.
+     * @param ResponseFactory $responseFactory
+     * @param array $config
+     */
+    public function __construct(
+        ResponseFactory $responseFactory,
+        array $config = []
+    )
+    {
+        $this->responseFactory = $responseFactory;
 
-		return Yii::$container->get(Response::class, $parsedResponse);
-	}
+        parent::__construct($config);
+    }
+
+    /**
+     * @param string $url
+     * @param Request $request
+     * @return Response
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\di\NotInstantiableException
+     */
+    public function sendRequest(string $url, Request $request): Response
+    {
+        $guzzleResponse = $this->guzzleClient->request('POST', $url, [
+            'form_params' => $request->getRequestParams()
+        ]);
+
+        $parsedResponse = $this->parser->parse($guzzleResponse->getBody()->getContents());
+
+        return $this->responseFactory->create($parsedResponse);
+    }
 }
