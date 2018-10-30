@@ -2,9 +2,9 @@
 
 namespace koudy\yii2\smsc;
 
-use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
+use yii\di\Instance;
 
 class Sender extends Component
 {
@@ -14,9 +14,9 @@ class Sender extends Component
     private $requestFactory;
 
     /**
-     * @var Client
+     * @var Client|string
      */
-    public $client;
+    public $client = 'koudy\yii2\smsc\Client';
 
     /**
      * @var string
@@ -47,13 +47,15 @@ class Sender extends Component
         parent::__construct($config);
     }
 
+    /**
+     * @inheritdoc
+     * @throws InvalidConfigException
+     */
     public function init()
     {
         parent::init();
 
-        if (!$this->client instanceof Client) {
-            throw new InvalidConfigException('Wrong Client.');
-        }
+        $this->client = Instance::ensure($this->client, Client::class);
 
         if (!$this->url) {
             throw new InvalidConfigException('The "url" property must be set.');

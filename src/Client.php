@@ -5,6 +5,8 @@ namespace koudy\yii2\smsc;
 use GuzzleHttp\Client as GuzzleClient;
 use Yii;
 use yii\base\Component;
+use yii\base\InvalidConfigException;
+use yii\di\Instance;
 
 class Client extends Component
 {
@@ -16,12 +18,12 @@ class Client extends Component
     /**
      * @var GuzzleClient
      */
-    public $guzzleClient;
+    public $guzzleClient = 'GuzzleHttp\Client';
 
     /**
      * @var Parser
      */
-    public $parser;
+    public $parser = 'koudy\yii2\smsc\Parser';
 
     /**
      * Client constructor.
@@ -39,12 +41,24 @@ class Client extends Component
     }
 
     /**
+     * @inheritdoc
+     * @throws InvalidConfigException
+     */
+    public function init()
+    {
+        parent::init();
+
+        $this->guzzleClient = Instance::ensure($this->guzzleClient, GuzzleClient::class);
+
+        $this->parser = Instance::ensure($this->parser, Parser::class);
+    }
+
+    /**
      * @param string $url
      * @param Request $request
      * @return Response
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \yii\base\InvalidConfigException
-     * @throws \yii\di\NotInstantiableException
      */
     public function sendRequest(string $url, Request $request): Response
     {

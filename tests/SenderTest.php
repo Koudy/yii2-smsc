@@ -16,13 +16,63 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(Component::class, $sender);
     }
 
+    public function testCreate()
+    {
+        $params = [
+            'login' => '::some login::',
+            'password' => '::some password::',
+        ];
+        $sender = Yii::$container->get(Sender::class, [1 => $params]);
+
+        $this->assertInstanceOf(Sender::class, $sender);
+        $this->assertInstanceOf(Client::class, $sender->client);
+    }
+
     /**
      * @expectedException \yii\base\InvalidConfigException
-     * @expectedExceptionMessage Wrong Client.
+     * @expectedExceptionMessage The required component is not specified.
+     */
+    public function testCreateWhenEmptyClient()
+    {
+        new Sender($this->createMock(RequestFactory::class), ['client' => '']);
+    }
+
+    /**
+     * @expectedException \yii\base\InvalidConfigException
+     * @expectedExceptionMessage Invalid data type: stdClass. koudy\yii2\smsc\Client is expected.
      */
     public function testCreateWhenWrongClient()
     {
         new Sender($this->createMock(RequestFactory::class), ['client' => new Stdclass()]);
+    }
+
+    public function testCreateWhenCorrectClientObject()
+    {
+        $client = $this->createMock(Client::class);
+        $sender = new Sender(
+            $this->createMock(RequestFactory::class),
+            [
+                'client' => $client,
+                'login' => '::some login::',
+                'password' => '::some password::',
+            ]
+        );
+
+        $this->assertSame($client, $sender->client);
+    }
+
+    public function testCreateWhenCorrectClientClassName()
+    {
+        $sender = new Sender(
+            $this->createMock(RequestFactory::class),
+            [
+                'client' => ClientForSenderTest::class,
+                'login' => '::some login::',
+                'password' => '::some password::',
+            ]
+        );
+
+        $this->assertInstanceOf(ClientForSenderTest::class, $sender->client);
     }
 
     /**
@@ -135,4 +185,8 @@ class SenderTest extends \PHPUnit\Framework\TestCase
             ->getMock();
         $sender->send($message);
     }
+}
+
+class ClientForSenderTest extends Client
+{
 }
