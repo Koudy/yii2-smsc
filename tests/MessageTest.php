@@ -16,8 +16,7 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $message = new Message();
         $phone = '::phone::';
 
-        $message->setPhone($phone);
-
+        $this->assertSame($message, $message->setPhone($phone));
         $this->assertEquals($phone, $message->getPhone());
     }
 
@@ -26,8 +25,7 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $message = new Message();
         $text = '::some text::';
 
-        $message->setText($text);
-
+        $this->assertSame($message, $message->setText($text));
         $this->assertEquals($text, $message->getText());
     }
 

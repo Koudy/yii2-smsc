@@ -27,10 +27,13 @@ class Message extends Model
 
     /**
      * @param $phone
+     * @return Message
      */
-    public function setPhone($phone): void
+    public function setPhone($phone): Message
     {
         $this->phone = $phone;
+
+        return $this;
     }
 
     /**
@@ -43,10 +46,13 @@ class Message extends Model
 
     /**
      * @param string $text
+     * @return Message
      */
-    public function setText(string $text): void
+    public function setText(string $text): Message
     {
         $this->text = $text;
+
+        return $this;
     }
 
     /**
