@@ -129,6 +129,18 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('https://smsc.ru/sys/send.php', $sender->url);
     }
 
+    public function testCreateMessage()
+    {
+        $sender = $this->getMockBuilder(Sender::class)
+            ->setMethodsExcept(['createMessage'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $message = $sender->createMessage();
+
+        $this->assertInstanceOf(Message::class, $message);
+    }
+
     public function testSend()
     {
         $phone = '::phone::';

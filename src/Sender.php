@@ -70,12 +70,16 @@ class Sender extends Component
         }
     }
 
+    public function createMessage(): Message
+    {
+        return new Message();
+    }
+
     /**
      * @param Message $message
      * @return Response
+     * @throws InvalidConfigException
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \yii\base\InvalidConfigException
-     * @throws \yii\di\NotInstantiableException
      */
     public function send(Message $message): Response
     {
