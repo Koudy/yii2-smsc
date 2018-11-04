@@ -157,7 +157,17 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             'parser' => $parser
         ];
 
-        $client = new Client($responseFactory, $clientConfig);
+        $client = $this->getMockBuilder(Client::class)
+            ->setMethods(['trigger'])
+            ->setConstructorArgs([$responseFactory, $clientConfig])
+            ->getMock();
+        $client
+            ->expects(self::exactly(2))
+            ->method('trigger')
+            ->withConsecutive(
+                ['before sending'],
+                ['after sending']
+            );
 
         $this->assertSame($response, $client->sendRequest($url, $request));
     }

@@ -10,6 +10,10 @@ use yii\di\Instance;
 
 class Client extends Component
 {
+    const EVENT_BEFORE_SENDING = 'before sending';
+
+    const EVENT_AFTER_SENDING = 'after sending';
+
     /**
      * @var ResponseFactory
      */
@@ -62,9 +66,13 @@ class Client extends Component
      */
     public function sendRequest(string $url, Request $request): Response
     {
+        $this->trigger(self::EVENT_BEFORE_SENDING);
+
         $guzzleResponse = $this->guzzleClient->request('POST', $url, [
             'form_params' => $request->getRequestParams()
         ]);
+
+        $this->trigger(self::EVENT_AFTER_SENDING);
 
         $parsedResponse = $this->parser->parse($guzzleResponse->getBody()->getContents());
 
