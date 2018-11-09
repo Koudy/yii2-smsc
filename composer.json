@@ -9,7 +9,7 @@
     "api"
   ],
   "require": {
-    "yiisoft/yii2": "2.0.14",
+    "yiisoft/yii2": "~2.0.14",
     "php": ">=7.1.0",
     "guzzlehttp/guzzle": "^6.3.3",
     "mikk150/yii2-phone-validator": "~1.0.0"
