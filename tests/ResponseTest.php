@@ -18,13 +18,13 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
 
 		$parsedResponse = [
 			'id' => $id,
-			'count' => $count
+			'cnt' => $count
 		];
 
 		$response = new Response($parsedResponse);
 
 		$this->assertEquals($id, $response->getId());
-		$this->assertEquals($count, $response->getCount());
+		$this->assertEquals($count, $response->getCnt());
 	}
 
 	private function getFaker()

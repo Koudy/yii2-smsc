@@ -14,7 +14,7 @@ class Response extends Component
 	/**
 	 * @var int
 	 */
-	public $count;
+	public $cnt;
 
 	/**
 	 * @return null|string
@@ -27,8 +27,8 @@ class Response extends Component
 	/**
 	 * @return int|null
 	 */
-	public function getCount(): ?int
+	public function getCnt(): ?int
 	{
-		return $this->count;
+		return $this->cnt;
 	}
 }
