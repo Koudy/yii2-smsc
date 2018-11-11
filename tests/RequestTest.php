@@ -4,7 +4,7 @@ use koudy\yii2\smsc\Request;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGetRequestParamsWhenOnlyOnePhone()
+    public function testCreate()
     {
         $phone = '::phone::';
         $text = '::text::';

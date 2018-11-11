@@ -14,9 +14,23 @@ class ResponseFactoryTest extends \PHPUnit\Framework\TestCase
         $factory = new ResponseFactory();
         $response = $factory->create($parsedParams);
 
+        Yii::$container->clear(Response::class);
+
         $this->assertInstanceOf(Response::class, $response);
 
         $this->assertEquals($parsedParams, $response->getParsedParams());
+    }
+
+    public function testCreateWhenUnknownParams()
+    {
+        $parsedParams = [
+            '::some_key::' => '::some param::'
+        ];
+
+        $factory = new ResponseFactory();
+        $response = $factory->create($parsedParams);
+
+        $this->assertInstanceOf(Response::class, $response);
     }
 }
 
@@ -24,9 +38,9 @@ class ResponseForResponseFactoryTest extends Response
 {
     private $parsedParams;
 
-    public function __construct($parsedParams)
+    public function setAttributes($values, $safeOnly = true)
     {
-        $this->parsedParams = $parsedParams;
+        $this->parsedParams = $values;
     }
 
     public function getParsedParams()

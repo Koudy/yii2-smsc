@@ -3,6 +3,7 @@
 namespace koudy\yii2\smsc;
 
 use GuzzleHttp\Client as GuzzleClient;
+use koudy\yii2\smsc\exceptions\ClientException;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -68,9 +69,13 @@ class Client extends Component
     {
         $this->trigger(self::EVENT_BEFORE_SENDING);
 
-        $guzzleResponse = $this->guzzleClient->request('POST', $url, [
-            'form_params' => $request->getRequestParams()
-        ]);
+        try {
+            $guzzleResponse = $this->guzzleClient->request('POST', $url, [
+                'form_params' => $request->getRequestParams()
+            ]);
+        } catch (\Exception $exception) {
+            throw new ClientException($exception->getMessage());
+        }
 
         $this->trigger(self::EVENT_AFTER_SENDING);
 

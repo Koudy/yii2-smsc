@@ -2,6 +2,7 @@
 
 use GuzzleHttp\Client as GuzzleClient;
 use koudy\yii2\smsc\Client;
+use koudy\yii2\smsc\exceptions\ClientException;
 use koudy\yii2\smsc\Parser;
 use koudy\yii2\smsc\Request;
 use koudy\yii2\smsc\Response;
@@ -168,6 +169,38 @@ class ClientTest extends \PHPUnit\Framework\TestCase
                 ['before sending'],
                 ['after sending']
             );
+
+        $this->assertSame($response, $client->sendRequest($url, $request));
+    }
+
+    /**
+     * @expectedException \koudy\yii2\smsc\exceptions\ClientException
+     * @expectedExceptionMessage ::some error::
+     */
+    public function testSendRequestWhenGuzzleException()
+    {
+        $url = '::url::';
+        $request = $this->createMock(Request::class);
+
+        $guzzleClient = $this->createMock(GuzzleClient::class);
+        $guzzleClient
+            ->method('request')
+            ->willThrowException(new \Exception('::some error::'));
+
+        $response = $this->createMock(Response::class);
+
+        $responseFactory = $this->createMock(ResponseFactory::class);
+        $parser = $this->createMock(Parser::class);
+
+        $clientConfig = [
+            'guzzleClient' => $guzzleClient,
+            'parser' => $parser
+        ];
+
+        $client = $this->getMockBuilder(Client::class)
+            ->setMethodsExcept(['sendRequest'])
+            ->setConstructorArgs([$responseFactory, $clientConfig])
+            ->getMock();
 
         $this->assertSame($response, $client->sendRequest($url, $request));
     }

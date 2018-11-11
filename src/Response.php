@@ -2,9 +2,9 @@
 
 namespace koudy\yii2\smsc;
 
-use yii\base\Component;
+use yii\base\Model;
 
-class Response extends Component
+class Response extends Model
 {
 	/**
 	 * @var string

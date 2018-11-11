@@ -3,6 +3,7 @@
 namespace koudy\yii2\smsc;
 
 use Yii;
+use yii\base\Model;
 
 class ResponseFactory
 {
@@ -13,6 +14,9 @@ class ResponseFactory
      */
     public function create($parsedResponse): Response
     {
-        return Yii::createObject(Response::class, [$parsedResponse]);
+        $response = Yii::$container->get(Response::class);
+        $response->setAttributes($parsedResponse);
+
+        return $response;
     }
 }

@@ -1,14 +1,14 @@
 <?php
 
 use koudy\yii2\smsc\Response;
-use yii\base\Component;
+use yii\base\Model;
 
 class ResponseTest extends \PHPUnit\Framework\TestCase
 {
 	public function testInheritance()
 	{
 		$sender = new Response();
-		$this->assertInstanceOf(Component::class, $sender);
+		$this->assertInstanceOf(Model::class, $sender);
 	}
 
 	public function testCreate()
