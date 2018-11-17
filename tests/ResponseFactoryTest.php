@@ -40,7 +40,9 @@ class ResponseForResponseFactoryTest extends Response
 
     public function setAttributes($values, $safeOnly = true)
     {
-        $this->parsedParams = $values;
+        if (!$safeOnly) {
+            $this->parsedParams = $values;
+        }
     }
 
     public function getParsedParams()

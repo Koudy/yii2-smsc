@@ -14,8 +14,11 @@ class ResponseFactory
      */
     public function create($parsedResponse): Response
     {
+        /**
+         * @var Response $response
+         */
         $response = Yii::$container->get(Response::class);
-        $response->setAttributes($parsedResponse);
+        $response->setAttributes($parsedResponse, false);
 
         return $response;
     }

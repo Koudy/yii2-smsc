@@ -1,5 +1,9 @@
 <?php
 
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use koudy\yii2\smsc\Sender;
 use koudy\yii2\smsc\Client;
 use koudy\yii2\smsc\Message;
@@ -141,7 +145,7 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(Message::class, $message);
     }
 
-    public function testSend()
+    public function testSendUnit()
     {
         $phone = '::phone::';
         $text = '::text::';
@@ -181,6 +185,48 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($response, $sender->send($message));
     }
 
+    public function testSendIntegration()
+    {
+        $login = '::login::';
+        $password = '::password::';
+        $url = 'https://smsc.ru/sys/send.php';
+
+        $phone = '+79161234567';
+        $text = '::text::';
+
+        $id = '::id::';
+        $cnt = $this->getFaker()->numberBetween(1, 1000);
+
+        $guzzleResponse = new \GuzzleHttp\Psr7\Response(200, ['X-Foo' => 'Bar'], '{"id": "' . $id . '","cnt": ' . $cnt . '}');
+        $mock = new MockHandler([
+            $guzzleResponse
+        ]);
+
+        $handler = HandlerStack::create($mock);
+        $guzzleClient =  new GuzzleClient(['handler' => $handler]);
+
+        Yii::$container->set(GuzzleClient::class, $guzzleClient);
+
+        /**
+         * @var Sender $sender
+         */
+        $sender = Yii::createObject([
+            'class' => Sender::class,
+            'login' => $login,
+            'password' => $password,
+            'url' => $url
+        ]);
+
+        $message = $sender->createMessage();
+        $message->setPhone($phone);
+        $message->setText($text);
+
+        $response = $sender->send($message);
+
+        $this->assertEquals($id, $response->getId());
+        $this->assertEquals($cnt, $response->getCnt());
+    }
+
     /**
      * @expectedException \Exception
      * @expectedExceptionMessage Validation failed.
@@ -196,6 +242,11 @@ class SenderTest extends \PHPUnit\Framework\TestCase
             ->setMethodsExcept(['send'])
             ->getMock();
         $sender->send($message);
+    }
+
+    private function getFaker()
+    {
+        return Faker\Factory::create();
     }
 }
 

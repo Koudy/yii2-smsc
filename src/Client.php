@@ -23,12 +23,12 @@ class Client extends Component
     /**
      * @var GuzzleClient
      */
-    public $guzzleClient = 'GuzzleHttp\Client';
+    public $guzzleClient = GuzzleClient::class;
 
     /**
      * @var Parser
      */
-    public $parser = 'koudy\yii2\smsc\Parser';
+    public $parser = Parser::class;
 
     /**
      * Client constructor.
@@ -62,8 +62,8 @@ class Client extends Component
      * @param string $url
      * @param Request $request
      * @return Response
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \yii\base\InvalidConfigException
+     * @throws ClientException
+     * @throws InvalidConfigException
      */
     public function sendRequest(string $url, Request $request): Response
     {

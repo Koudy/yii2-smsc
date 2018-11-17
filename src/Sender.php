@@ -16,7 +16,7 @@ class Sender extends Component
     /**
      * @var Client|string
      */
-    public $client = 'koudy\yii2\smsc\Client';
+    public $client = Client::class;
 
     /**
      * @var string
@@ -79,7 +79,7 @@ class Sender extends Component
      * @param Message $message
      * @return Response
      * @throws InvalidConfigException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws exceptions\ClientException
      */
     public function send(Message $message): Response
     {
