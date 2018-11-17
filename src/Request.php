@@ -6,6 +6,8 @@ class Request
 {
     const RESPONSE_JSON_FORMAT = 3;
 
+    const CHARSET = 'utf-8';
+
     /**
      * @var string
      */
@@ -46,7 +48,8 @@ class Request
             'psw' => $this->password,
             'phones' => $this->phone,
             'mes' => $this->text,
-            'fmt' => self::RESPONSE_JSON_FORMAT
+            'fmt' => self::RESPONSE_JSON_FORMAT,
+            'charset' => self::CHARSET
         ];
     }
 }

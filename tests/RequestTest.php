@@ -13,6 +13,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $password = '::password::';
 
         $responseJsonFormat = 3;
+        $charset = 'utf-8';
 
         $request = new Request($phone, $text, $login, $password);
 
@@ -21,7 +22,8 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             'psw' => $password,
             'phones' => $phone,
             'mes' => $text,
-            'fmt' => $responseJsonFormat
+            'fmt' => $responseJsonFormat,
+            'charset' => $charset
         ];
 
         $this->assertEquals($requestParams, $request->getRequestParams());
