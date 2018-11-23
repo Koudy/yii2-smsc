@@ -6,6 +6,9 @@ class Request
 {
     const RESPONSE_JSON_FORMAT = 3;
 
+    //Признак необходимости добавления в ответ сервера информации по каждому номеру.
+    const OP = 1;
+
     const CHARSET = 'utf-8';
 
     /**
@@ -49,6 +52,7 @@ class Request
             'phones' => $this->phone,
             'mes' => $this->text,
             'fmt' => self::RESPONSE_JSON_FORMAT,
+            'op' => self::OP,
             'charset' => self::CHARSET
         ];
     }

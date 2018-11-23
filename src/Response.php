@@ -17,6 +17,11 @@ class Response extends Model
 	public $cnt;
 
 	/**
+	 * @var array
+	 */
+	public $phones;
+
+	/**
 	 * @return null|string
 	 */
 	public function getId(): ?string
@@ -30,5 +35,13 @@ class Response extends Model
 	public function getCnt(): ?int
 	{
 		return $this->cnt;
+	}
+
+    /**
+     * @return string|null
+     */
+	public function getStatus(): ?string
+	{
+		return $this->phones[0]['status'];
 	}
 }

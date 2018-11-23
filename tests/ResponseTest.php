@@ -15,16 +15,27 @@ class ResponseTest extends \PHPUnit\Framework\TestCase
 	{
 		$id = '::id::';
 		$count = $this->getFaker()->numberBetween(1, 1000);
+		$status = '::status::';
 
 		$parsedResponse = [
 			'id' => $id,
-			'cnt' => $count
+			'cnt' => $count,
+            'phones' => [
+                [
+                    'phone' => '::phone::',
+                    'mccmnc' => '::mccmnc::',
+                    'cost' => '::cost::',
+                    'status' => $status,
+                    'error' => '::error::'
+                ],
+            ]
 		];
 
 		$response = new Response($parsedResponse);
 
 		$this->assertEquals($id, $response->getId());
 		$this->assertEquals($count, $response->getCnt());
+		$this->assertEquals($status, $response->getStatus());
 	}
 
 	private function getFaker()

@@ -13,6 +13,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
         $password = '::password::';
 
         $responseJsonFormat = 3;
+        $op = 1;
         $charset = 'utf-8';
 
         $request = new Request($phone, $text, $login, $password);
@@ -23,6 +24,7 @@ class RequestTest extends \PHPUnit\Framework\TestCase
             'phones' => $phone,
             'mes' => $text,
             'fmt' => $responseJsonFormat,
+            'op' => $op,
             'charset' => $charset
         ];
 

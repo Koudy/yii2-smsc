@@ -196,8 +196,26 @@ class SenderTest extends \PHPUnit\Framework\TestCase
 
         $id = '::id::';
         $cnt = $this->getFaker()->numberBetween(1, 1000);
+        $status = '::status::';
 
-        $guzzleResponse = new \GuzzleHttp\Psr7\Response(200, ['X-Foo' => 'Bar'], '{"id": "' . $id . '","cnt": ' . $cnt . '}');
+        $guzzleResponse = new \GuzzleHttp\Psr7\Response(
+            200,
+            ['X-Foo' => 'Bar'],
+            '{
+                "id": "' . $id . '",
+                "cnt": ' . $cnt . ',
+                "phones":[
+                    {
+                        "phone":"::phone::",
+                        "mccmnc":"::mccmnc::",
+                        "cost":"::cost::",
+                        "status":"' . $status . '",
+                        "error":"::error::"
+                    }
+                ]
+            }'
+        );
+
         $mock = new MockHandler([
             $guzzleResponse
         ]);
@@ -225,6 +243,7 @@ class SenderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($id, $response->getId());
         $this->assertEquals($cnt, $response->getCnt());
+        $this->assertEquals($status, $response->getStatus());
     }
 
     /**

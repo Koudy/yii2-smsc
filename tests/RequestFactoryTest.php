@@ -14,6 +14,8 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
         $password = '::password::';
 
         $responseJsonFormat = 3;
+        $op = 1;
+        $charset = 'utf-8';
 
         $factory = new RequestFactory();
         $request = $factory->create($phone, $text, $login, $password);
@@ -25,7 +27,9 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
             'psw' => $password,
             'phones' => $phone,
             'mes' => $text,
-            'fmt' => $responseJsonFormat
+            'fmt' => $responseJsonFormat,
+            'op' => $op,
+            'charset' => $charset
         ];
 
         $this->assertEquals($requestParams, $request->getRequestParams());
