@@ -29,6 +29,35 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($text, $message->getText());
     }
 
+    public function testSetAttributes()
+    {
+        $id = '::id::';
+        $cnt = $this->getFaker()->numberBetween(1, 1000);
+        $status = '::status::';
+
+        $message = new Message();
+        $attributes = [
+            'id' => $id,
+            'cnt' => $cnt,
+            'phones' => [
+                '0' => [
+                    'phone' => '::phone::',
+                    'mccmnc' => '::mccmnc::',
+                    'cost' => '::cost::',
+                    'status' => $status,
+                    'error' => '::error::'
+                ]
+            ]
+        ];
+
+        $safeOnly = false;
+        $message->setAttributes($attributes, $safeOnly);
+
+        $this->assertSame($id, $message->getId());
+        $this->assertSame($cnt, $message->getCnt());
+        $this->assertSame($status, $message->getStatus());
+    }
+
     public function testValidatePhoneWhenItIsEmpty()
     {
         $message = new Message();
@@ -105,5 +134,10 @@ class MessageTest extends \PHPUnit\Framework\TestCase
             ['8(916)-123-45-67'],
             ['8 (916)-123-45-67'],
         ];
+    }
+
+    private function getFaker()
+    {
+        return Faker\Factory::create();
     }
 }

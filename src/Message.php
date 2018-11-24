@@ -17,6 +17,21 @@ class Message extends Model
      */
     private $text;
 
+    /**
+     * @var string
+     */
+    public $id;
+
+    /**
+     * @var int
+     */
+    public $cnt;
+
+    /**
+     * @var array
+     */
+    public $phones;
+
     public function rules()
     {
         return [
@@ -61,5 +76,29 @@ class Message extends Model
     public function getText(): string
     {
         return $this->text;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCnt(): ?int
+    {
+        return $this->cnt;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getStatus(): ?string
+    {
+        return $this->phones[0]['status'];
     }
 }

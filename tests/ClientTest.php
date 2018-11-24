@@ -2,11 +2,8 @@
 
 use GuzzleHttp\Client as GuzzleClient;
 use koudy\yii2\smsc\Client;
-use koudy\yii2\smsc\exceptions\ClientException;
 use koudy\yii2\smsc\Parser;
 use koudy\yii2\smsc\Request;
-use koudy\yii2\smsc\Response;
-use koudy\yii2\smsc\ResponseFactory;
 use yii\base\Component;
 
 class ClientTest extends \PHPUnit\Framework\TestCase
@@ -34,7 +31,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateWhenEmptyGuzzleClient()
     {
-        new Client($this->createMock(ResponseFactory::class), ['guzzleClient' => '']);
+        new Client(['guzzleClient' => '']);
     }
 
     /**
@@ -43,30 +40,20 @@ class ClientTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateWhenWrongGuzzleClient()
     {
-        new Client($this->createMock(ResponseFactory::class), ['guzzleClient' => new Stdclass()]);
+        new Client(['guzzleClient' => new Stdclass()]);
     }
 
     public function testCreateWhenCorrectGuzzleClientObject()
     {
         $guzzleClient = $this->createMock(GuzzleClient::class);
-        $client = new Client(
-            $this->createMock(ResponseFactory::class),
-            [
-                'guzzleClient' => $guzzleClient
-            ]
-        );
+        $client = new Client(['guzzleClient' => $guzzleClient]);
 
         $this->assertSame($guzzleClient, $client->guzzleClient);
     }
 
     public function testCreateWhenCorrectGuzzleClientClassName()
     {
-        $client = new Client(
-            $this->createMock(ResponseFactory::class),
-            [
-                'guzzleClient' => GuzzleClientForClientTest::class,
-            ]
-        );
+        $client = new Client(['guzzleClient' => GuzzleClientForClientTest::class,]);
 
         $this->assertInstanceOf(GuzzleClientForClientTest::class, $client->guzzleClient);
     }
@@ -79,7 +66,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateWhenEmptyParser()
     {
-        new Client($this->createMock(ResponseFactory::class), ['parser' => '']);
+        new Client(['parser' => '']);
     }
 
     /**
@@ -88,30 +75,20 @@ class ClientTest extends \PHPUnit\Framework\TestCase
      */
     public function testCreateWhenWrongParser()
     {
-        new Client($this->createMock(ResponseFactory::class), ['parser' => new Stdclass()]);
+        new Client(['parser' => new Stdclass()]);
     }
 
     public function testCreateWhenCorrectParserObject()
     {
         $parser = $this->createMock(Parser::class);
-        $client = new Client(
-            $this->createMock(ResponseFactory::class),
-            [
-                'parser' => $parser
-            ]
-        );
+        $client = new Client(['parser' => $parser]);
 
         $this->assertSame($parser, $client->parser);
     }
 
     public function testCreateWhenCorrectParserClassName()
     {
-        $client = new Client(
-            $this->createMock(ResponseFactory::class),
-            [
-                'parser' => ParserForClientTest::class,
-            ]
-        );
+        $client = new Client(['parser' => ParserForClientTest::class,]);
 
         $this->assertInstanceOf(ParserForClientTest::class, $client->parser);
     }
@@ -145,11 +122,6 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             ->with('POST', $url, $guzzleRequestParams)
             ->willReturn($guzzleResponse);
 
-        $response = $this->createMock(Response::class);
-
-        $responseFactory = $this->createMock(ResponseFactory::class);
-        $responseFactory->method('create')->with($parsedResponse)->willReturn($response);
-
         $parser = $this->createMock(Parser::class);
         $parser->method('parse')->with($rawResponse)->willReturn($parsedResponse);
 
@@ -160,7 +132,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
 
         $client = $this->getMockBuilder(Client::class)
             ->setMethods(['trigger'])
-            ->setConstructorArgs([$responseFactory, $clientConfig])
+            ->setConstructorArgs([$clientConfig])
             ->getMock();
         $client
             ->expects(self::exactly(2))
@@ -170,7 +142,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
                 ['after sending']
             );
 
-        $this->assertSame($response, $client->sendRequest($url, $request));
+        $this->assertSame($parsedResponse, $client->sendRequest($url, $request));
     }
 
     /**
@@ -187,9 +159,6 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             ->method('request')
             ->willThrowException(new \Exception('::some error::'));
 
-        $response = $this->createMock(Response::class);
-
-        $responseFactory = $this->createMock(ResponseFactory::class);
         $parser = $this->createMock(Parser::class);
 
         $clientConfig = [
@@ -199,10 +168,10 @@ class ClientTest extends \PHPUnit\Framework\TestCase
 
         $client = $this->getMockBuilder(Client::class)
             ->setMethodsExcept(['sendRequest'])
-            ->setConstructorArgs([$responseFactory, $clientConfig])
+            ->setConstructorArgs([$clientConfig])
             ->getMock();
 
-        $this->assertSame($response, $client->sendRequest($url, $request));
+        $client->sendRequest($url, $request);
     }
 }
 

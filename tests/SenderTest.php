@@ -155,10 +155,14 @@ class SenderTest extends \PHPUnit\Framework\TestCase
 
         $url = '::url::';
 
+        $responseData = ['::responase data::'];
+        $sateOnly = false;
+
         $message = $this->createMock(Message::class);
         $message->method('getPhone')->willReturn($phone);
         $message->method('getText')->willReturn($text);
         $message->method('validate')->willReturn(true);
+        $message->expects(self::once())->method('setAttributes')->with($responseData, $sateOnly);
 
         $request = $this->createMock(Request::class);
 
@@ -168,10 +172,8 @@ class SenderTest extends \PHPUnit\Framework\TestCase
             ->with($phone, $text, $login, $password)
             ->willReturn($request);
 
-        $response = $this->createMock(Response::class);
-
         $client = $this->createMock(Client::class);
-        $client->method('sendRequest')->with($url, $request)->willReturn($response);
+        $client->method('sendRequest')->with($url, $request)->willReturn($responseData);
 
         $senderConfig = [
             'login' => $login,
@@ -181,8 +183,7 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         ];
 
         $sender = new Sender($requestFactory, $senderConfig);
-
-        $this->assertSame($response, $sender->send($message));
+        $sender->send($message);
     }
 
     public function testSendIntegration()
@@ -239,11 +240,11 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $message->setPhone($phone);
         $message->setText($text);
 
-        $response = $sender->send($message);
+        $sender->send($message);
 
-        $this->assertEquals($id, $response->getId());
-        $this->assertEquals($cnt, $response->getCnt());
-        $this->assertEquals($status, $response->getStatus());
+        $this->assertEquals($id, $message->getId());
+        $this->assertEquals($cnt, $message->getCnt());
+        $this->assertEquals($status, $message->getStatus());
     }
 
     /**

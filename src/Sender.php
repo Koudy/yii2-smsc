@@ -75,13 +75,7 @@ class Sender extends Component
         return new Message();
     }
 
-    /**
-     * @param Message $message
-     * @return Response
-     * @throws InvalidConfigException
-     * @throws exceptions\ClientException
-     */
-    public function send(Message $message): Response
+    public function send(Message $message)
     {
         if (!$message->validate()) {
             throw new \Exception('Validation failed.');
@@ -94,6 +88,7 @@ class Sender extends Component
             $this->password
         );
 
-        return $this->client->sendRequest($this->url, $request);
+        $sateOnly = false;
+        $message->setAttributes($this->client->sendRequest($this->url, $request), $sateOnly);
     }
 }

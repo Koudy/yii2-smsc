@@ -16,11 +16,6 @@ class Client extends Component
     const EVENT_AFTER_SENDING = 'after sending';
 
     /**
-     * @var ResponseFactory
-     */
-    private $responseFactory;
-
-    /**
      * @var GuzzleClient
      */
     public $guzzleClient = GuzzleClient::class;
@@ -29,21 +24,6 @@ class Client extends Component
      * @var Parser
      */
     public $parser = Parser::class;
-
-    /**
-     * Client constructor.
-     * @param ResponseFactory $responseFactory
-     * @param array $config
-     */
-    public function __construct(
-        ResponseFactory $responseFactory,
-        array $config = []
-    )
-    {
-        $this->responseFactory = $responseFactory;
-
-        parent::__construct($config);
-    }
 
     /**
      * @inheritdoc
@@ -58,14 +38,7 @@ class Client extends Component
         $this->parser = Instance::ensure($this->parser, Parser::class);
     }
 
-    /**
-     * @param string $url
-     * @param Request $request
-     * @return Response
-     * @throws ClientException
-     * @throws InvalidConfigException
-     */
-    public function sendRequest(string $url, Request $request): Response
+    public function sendRequest(string $url, Request $request): array
     {
         $this->trigger(self::EVENT_BEFORE_SENDING);
 
@@ -79,8 +52,6 @@ class Client extends Component
 
         $this->trigger(self::EVENT_AFTER_SENDING);
 
-        $parsedResponse = $this->parser->parse($guzzleResponse->getBody()->getContents());
-
-        return $this->responseFactory->create($parsedResponse);
+        return $this->parser->parse($guzzleResponse->getBody()->getContents());
     }
 }
