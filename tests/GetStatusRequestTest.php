@@ -1,30 +1,29 @@
 <?php
 
-use koudy\yii2\smsc\Request;
+use koudy\yii2\smsc\GetStatusRequest;
+use koudy\yii2\smsc\SendRequest;
 
-class RequestTest extends \PHPUnit\Framework\TestCase
+class GetStatusRequestTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreate()
     {
+        $id = '::id::';
         $phone = '::phone::';
-        $text = '::text::';
 
         $login = '::login::';
         $password = '::password::';
 
         $responseJsonFormat = 3;
-        $op = 1;
         $charset = 'utf-8';
 
-        $request = new Request($phone, $text, $login, $password);
+        $request = new GetStatusRequest($id, $phone, $login, $password);
 
         $requestParams = [
             'login' => $login,
             'psw' => $password,
+            'id' => $id,
             'phones' => $phone,
-            'mes' => $text,
             'fmt' => $responseJsonFormat,
-            'op' => $op,
             'charset' => $charset
         ];
 

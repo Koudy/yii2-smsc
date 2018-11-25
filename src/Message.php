@@ -25,12 +25,12 @@ class Message extends Model
     /**
      * @var int
      */
-    public $cnt;
+    public $count;
 
     /**
-     * @var array
+     * @var string
      */
-    public $phones;
+    public $status;
 
     public function rules()
     {
@@ -79,9 +79,20 @@ class Message extends Model
     }
 
     /**
-     * @return null|string
+     * @param string $id
+     * @return Message
      */
-    public function getId(): ?string
+    public function setId(string $id): Message
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId(): string
     {
         return $this->id;
     }
@@ -89,9 +100,9 @@ class Message extends Model
     /**
      * @return int|null
      */
-    public function getCnt(): ?int
+    public function getCount(): ?int
     {
-        return $this->cnt;
+        return $this->count;
     }
 
     /**
@@ -99,6 +110,6 @@ class Message extends Model
      */
     public function getStatus(): ?string
     {
-        return $this->phones[0]['status'];
+        return $this->status;
     }
 }

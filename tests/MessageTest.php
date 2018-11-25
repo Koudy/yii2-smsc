@@ -29,32 +29,33 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($text, $message->getText());
     }
 
+    public function testSetGetId()
+    {
+        $message = new Message();
+        $id = '::id::';
+
+        $this->assertSame($message, $message->setId($id));
+        $this->assertEquals($id, $message->getId());
+    }
+
     public function testSetAttributes()
     {
         $id = '::id::';
-        $cnt = $this->getFaker()->numberBetween(1, 1000);
+        $count = $this->getFaker()->numberBetween(1, 1000);
         $status = '::status::';
 
         $message = new Message();
         $attributes = [
             'id' => $id,
-            'cnt' => $cnt,
-            'phones' => [
-                '0' => [
-                    'phone' => '::phone::',
-                    'mccmnc' => '::mccmnc::',
-                    'cost' => '::cost::',
-                    'status' => $status,
-                    'error' => '::error::'
-                ]
-            ]
+            'count' => $count,
+            'status' => $status
         ];
 
         $safeOnly = false;
         $message->setAttributes($attributes, $safeOnly);
 
         $this->assertSame($id, $message->getId());
-        $this->assertSame($cnt, $message->getCnt());
+        $this->assertSame($count, $message->getCount());
         $this->assertSame($status, $message->getStatus());
     }
 

@@ -2,6 +2,8 @@
 
 namespace koudy\yii2\smsc;
 
+use koudy\yii2\smsc\interfaces\Request;
+use koudy\yii2\smsc\interfaces\ResponseFactory;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 use yii\di\Instance;
@@ -9,9 +11,14 @@ use yii\di\Instance;
 class Sender extends Component
 {
     /**
-     * @var RequestFactory
+     * @var SendFactory
      */
-    private $requestFactory;
+    private $sendFactory;
+
+    /**
+     * @var GetStatusFactory
+     */
+    private $getStatusFactory;
 
     /**
      * @var Client|string
@@ -34,15 +41,19 @@ class Sender extends Component
     public $url = 'https://smsc.ru/sys/send.php';
 
     /**
-     * @param RequestFactory $requestFactory
+     * Sender constructor.
+     * @param SendFactory $responseFactory
+     * @param GetStatusFactory $getStatusRequestFactory
      * @param array $config
      */
     public function __construct(
-        RequestFactory $requestFactory,
+        SendFactory $responseFactory,
+        GetStatusFactory $getStatusRequestFactory,
         array $config = []
     )
     {
-        $this->requestFactory = $requestFactory;
+        $this->sendFactory = $responseFactory;
+        $this->getStatusFactory = $getStatusRequestFactory;
 
         parent::__construct($config);
     }
@@ -70,25 +81,61 @@ class Sender extends Component
         }
     }
 
+    /**
+     * @return Message
+     */
     public function createMessage(): Message
     {
         return new Message();
     }
 
+    /**
+     * @param Message $message
+     * @throws exceptions\ClientException
+     */
     public function send(Message $message)
     {
         if (!$message->validate()) {
             throw new \Exception('Validation failed.');
         }
 
-        $request = $this->requestFactory->create(
+        $request = $this->sendFactory->createRequest(
             $message->getPhone(),
             $message->getText(),
             $this->login,
             $this->password
         );
 
+        $this->sendRequest($message, $request, $this->sendFactory);
+    }
+
+    /**
+     * @param Message $message
+     * @throws exceptions\ClientException
+     */
+    public function getStatus(Message $message)
+    {
+        $request = $this->getStatusFactory->createRequest(
+            $message->getId(),
+            $message->getPhone(),
+            $this->login,
+            $this->password
+        );
+
+        $this->sendRequest($message, $request, $this->getStatusFactory);
+    }
+
+    /**
+     * @param Message $message
+     * @param Request $request
+     * @param ResponseFactory $responseFactory
+     * @throws exceptions\ClientException
+     */
+    private function sendRequest(Message $message, Request $request, ResponseFactory $responseFactory)
+    {
+        $response = $this->client->sendRequest($this->url, $request, $responseFactory);
+
         $sateOnly = false;
-        $message->setAttributes($this->client->sendRequest($this->url, $request), $sateOnly);
+        $message->setAttributes($response->getData(), $sateOnly);
     }
 }

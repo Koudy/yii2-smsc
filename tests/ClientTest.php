@@ -2,8 +2,10 @@
 
 use GuzzleHttp\Client as GuzzleClient;
 use koudy\yii2\smsc\Client;
+use koudy\yii2\smsc\interfaces\Response;
+use koudy\yii2\smsc\interfaces\ResponseFactory;
 use koudy\yii2\smsc\Parser;
-use koudy\yii2\smsc\Request;
+use koudy\yii2\smsc\interfaces\Request;
 use yii\base\Component;
 
 class ClientTest extends \PHPUnit\Framework\TestCase
@@ -125,6 +127,14 @@ class ClientTest extends \PHPUnit\Framework\TestCase
         $parser = $this->createMock(Parser::class);
         $parser->method('parse')->with($rawResponse)->willReturn($parsedResponse);
 
+        $response = $this->createMock(Response::class);
+        $responseFactory = $this->createMock(ResponseFactory::class);
+        $responseFactory
+            ->expects(self::once())
+            ->method('createResponse')
+            ->with($parsedResponse)
+            ->willReturn($response);
+
         $clientConfig = [
             'guzzleClient' => $guzzleClient,
             'parser' => $parser
@@ -142,7 +152,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
                 ['after sending']
             );
 
-        $this->assertSame($parsedResponse, $client->sendRequest($url, $request));
+        $this->assertSame($response, $client->sendRequest($url, $request, $responseFactory));
     }
 
     /**
@@ -160,6 +170,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             ->willThrowException(new \Exception('::some error::'));
 
         $parser = $this->createMock(Parser::class);
+        $responseFactory = $this->createMock(ResponseFactory::class);
 
         $clientConfig = [
             'guzzleClient' => $guzzleClient,
@@ -171,7 +182,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             ->setConstructorArgs([$clientConfig])
             ->getMock();
 
-        $client->sendRequest($url, $request);
+        $client->sendRequest($url, $request, $responseFactory);
     }
 }
 

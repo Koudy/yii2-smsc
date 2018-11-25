@@ -1,13 +1,12 @@
 <?php
 
-use koudy\yii2\smsc\Request;
-use koudy\yii2\smsc\RequestFactory;
+use koudy\yii2\smsc\SendRequest;
 
-class RequestFactoryTest extends \PHPUnit\Framework\TestCase
+class SendRequestTest extends \PHPUnit\Framework\TestCase
 {
     public function testCreate()
     {
-        $phone = '::phones::';
+        $phone = '::phone::';
         $text = '::text::';
 
         $login = '::login::';
@@ -17,10 +16,7 @@ class RequestFactoryTest extends \PHPUnit\Framework\TestCase
         $op = 1;
         $charset = 'utf-8';
 
-        $factory = new RequestFactory();
-        $request = $factory->create($phone, $text, $login, $password);
-
-        $this->assertInstanceOf(Request::class, $request);
+        $request = new SendRequest($phone, $text, $login, $password);
 
         $requestParams = [
             'login' => $login,

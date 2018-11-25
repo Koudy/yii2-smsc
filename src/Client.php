@@ -4,6 +4,9 @@ namespace koudy\yii2\smsc;
 
 use GuzzleHttp\Client as GuzzleClient;
 use koudy\yii2\smsc\exceptions\ClientException;
+use koudy\yii2\smsc\interfaces\Request;
+use koudy\yii2\smsc\interfaces\Response;
+use koudy\yii2\smsc\interfaces\ResponseFactory;
 use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
@@ -38,7 +41,7 @@ class Client extends Component
         $this->parser = Instance::ensure($this->parser, Parser::class);
     }
 
-    public function sendRequest(string $url, Request $request): array
+    public function sendRequest(string $url, Request $request, ResponseFactory $responseFactory): Response
     {
         $this->trigger(self::EVENT_BEFORE_SENDING);
 
@@ -52,6 +55,9 @@ class Client extends Component
 
         $this->trigger(self::EVENT_AFTER_SENDING);
 
-        return $this->parser->parse($guzzleResponse->getBody()->getContents());
+        $parsedResponse = $this->parser->parse($guzzleResponse->getBody()->getContents());
+
+        return $responseFactory->createResponse($parsedResponse);
+
     }
 }

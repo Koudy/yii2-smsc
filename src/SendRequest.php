@@ -2,14 +2,10 @@
 
 namespace koudy\yii2\smsc;
 
-class Request
+class SendRequest implements interfaces\Request
 {
-    const RESPONSE_JSON_FORMAT = 3;
-
     //Признак необходимости добавления в ответ сервера информации по каждому номеру.
     const OP = 1;
-
-    const CHARSET = 'utf-8';
 
     /**
      * @var string
