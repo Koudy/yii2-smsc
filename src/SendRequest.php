@@ -40,6 +40,9 @@ class SendRequest implements interfaces\Request
         $this->password = $password;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getRequestParams(): array
     {
         return [
@@ -51,5 +54,13 @@ class SendRequest implements interfaces\Request
             'op' => self::OP,
             'charset' => self::CHARSET
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMethod(): string
+    {
+        return 'send.php';
     }
 }

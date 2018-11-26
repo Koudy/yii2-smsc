@@ -4,7 +4,7 @@ use koudy\yii2\smsc\GetStatusRequest;
 
 class GetStatusRequestTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCreate()
+    public function testGetRequestParams()
     {
         $id = '::id::';
         $phone = '::phone::';
@@ -27,5 +27,16 @@ class GetStatusRequestTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->assertEquals($requestParams, $request->getRequestParams());
+    }
+
+    public function testGetMethod()
+    {
+        $request = $this
+            ->getMockBuilder(GetStatusRequest::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['getMethod'])
+            ->getMock();
+
+        $this->assertEquals('status.php', $request->getMethod());
     }
 }

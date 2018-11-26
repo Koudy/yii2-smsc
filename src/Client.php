@@ -46,7 +46,7 @@ class Client extends Component
         $this->trigger(self::EVENT_BEFORE_SENDING);
 
         try {
-            $guzzleResponse = $this->guzzleClient->request('POST', $url, [
+            $guzzleResponse = $this->guzzleClient->request('POST', $url . $request->getMethod(), [
                 'form_params' => $request->getRequestParams()
             ]);
         } catch (\Exception $exception) {

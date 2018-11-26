@@ -38,7 +38,7 @@ class Sender extends Component
     /**
      * @var string
      */
-    public $url = 'https://smsc.ru/sys/send.php';
+    public $url = 'https://smsc.ru/sys/';
 
     /**
      * Sender constructor.
@@ -79,6 +79,8 @@ class Sender extends Component
         if (!$this->password) {
             throw new InvalidConfigException('The "password" property must be set.');
         }
+
+        $this->url = rtrim($this->url, '/') . '/';
     }
 
     /**

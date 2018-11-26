@@ -51,4 +51,12 @@ class GetStatusRequest implements interfaces\Request
             'charset' => self::CHARSET
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMethod(): string
+    {
+        return 'status.php';
+    }
 }

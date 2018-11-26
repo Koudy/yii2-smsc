@@ -4,7 +4,7 @@ use koudy\yii2\smsc\SendRequest;
 
 class SendRequestTest extends \PHPUnit\Framework\TestCase
 {
-    public function testCreate()
+    public function testGetRequestParams()
     {
         $phone = '::phone::';
         $text = '::text::';
@@ -29,5 +29,16 @@ class SendRequestTest extends \PHPUnit\Framework\TestCase
         ];
 
         $this->assertEquals($requestParams, $request->getRequestParams());
+    }
+
+    public function testGetMethod()
+    {
+        $request = $this
+            ->getMockBuilder(SendRequest::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['getMethod'])
+            ->getMock();
+
+        $this->assertEquals('send.php', $request->getMethod());
     }
 }

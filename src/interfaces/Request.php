@@ -8,5 +8,13 @@ interface Request
 
     const CHARSET = 'utf-8';
 
+    /**
+     * @return array
+     */
     public function getRequestParams(): array;
+
+    /**
+     * @return string
+     */
+    public function getMethod(): string;
 }

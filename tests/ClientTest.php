@@ -98,9 +98,11 @@ class ClientTest extends \PHPUnit\Framework\TestCase
     public function testSendRequest()
     {
         $url = '::url::';
+        $method = '::method::';
         $requestParams = ['::params::'];
         $rawResponse = '::raw response::';
         $request = $this->createMock(Request::class);
+        $request->method('getMethod')->willReturn($method);
         $request->method('getRequestParams')->willReturn($requestParams);
 
         $guzzleRequestParams = [
@@ -121,7 +123,7 @@ class ClientTest extends \PHPUnit\Framework\TestCase
         $guzzleClient
             ->expects(self::once())
             ->method('request')
-            ->with('POST', $url, $guzzleRequestParams)
+            ->with('POST', $url . $method, $guzzleRequestParams)
             ->willReturn($guzzleResponse);
 
         $parser = $this->createMock(Parser::class);

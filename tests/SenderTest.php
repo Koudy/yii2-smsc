@@ -108,6 +108,38 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testCreateWhenUrlWithoutSlash()
+    {
+        $sender = new Sender(
+            $this->createMock(SendFactory::class),
+            $this->createMock(GetStatusFactory::class),
+            [
+                'client' => $this->createMock(Client::class),
+                'url' => '::some url::',
+                'login' => '::some login::',
+                'password' => '::password::'
+            ]
+        );
+
+        $this->assertEquals('::some url::/', $sender->url);
+    }
+
+    public function testCreateWhenUrlWithSlash()
+    {
+        $sender = new Sender(
+            $this->createMock(SendFactory::class),
+            $this->createMock(GetStatusFactory::class),
+            [
+                'client' => $this->createMock(Client::class),
+                'url' => '::some url::/',
+                'login' => '::some login::',
+                'password' => '::password::'
+            ]
+        );
+
+        $this->assertEquals('::some url::/', $sender->url);
+    }
+
     /**
      * @expectedException \yii\base\InvalidConfigException
      * @expectedExceptionMessage The "login" property must be set.
@@ -143,10 +175,10 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testUrl()
+    public function testDefaultUrl()
     {
         $sender = $this->createMock(Sender::class);
-        $this->assertEquals('https://smsc.ru/sys/send.php', $sender->url);
+        $this->assertEquals('https://smsc.ru/sys/', $sender->url);
     }
 
     public function testCreateMessage()
@@ -169,7 +201,7 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $login = '::login::';
         $password = '::password::';
 
-        $url = '::url::';
+        $url = '::url::/';
 
         $responseData = ['::responase data::'];
 
@@ -295,7 +327,7 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $login = '::login::';
         $password = '::password::';
 
-        $url = '::url::';
+        $url = '::url::/';
 
         $responseData = ['::response data::'];
 
@@ -332,7 +364,7 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $sender->getStatus($message);
     }
 
-    public function testSetStatusIntegration()
+    public function testGetStatusIntegration()
     {
         $login = '::login::';
         $password = '::password::';
