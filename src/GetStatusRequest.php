@@ -46,7 +46,7 @@ class GetStatusRequest implements interfaces\Request
             'login' => $this->login,
             'psw' => $this->password,
             'id' => $this->id,
-            'phones' => $this->phone,
+            'phone' => $this->phone,
             'fmt' => self::RESPONSE_JSON_FORMAT,
             'charset' => self::CHARSET
         ];

@@ -26,7 +26,7 @@ class GetStatusFactoryTest extends \PHPUnit\Framework\TestCase
             'login' => $login,
             'psw' => $password,
             'id' => $id,
-            'phones' => $phone,
+            'phone' => $phone,
             'fmt' => $responseJsonFormat,
             'charset' => $charset
         ];

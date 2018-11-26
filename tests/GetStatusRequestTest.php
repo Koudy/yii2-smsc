@@ -1,7 +1,6 @@
 <?php
 
 use koudy\yii2\smsc\GetStatusRequest;
-use koudy\yii2\smsc\SendRequest;
 
 class GetStatusRequestTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,7 +21,7 @@ class GetStatusRequestTest extends \PHPUnit\Framework\TestCase
             'login' => $login,
             'psw' => $password,
             'id' => $id,
-            'phones' => $phone,
+            'phone' => $phone,
             'fmt' => $responseJsonFormat,
             'charset' => $charset
         ];
