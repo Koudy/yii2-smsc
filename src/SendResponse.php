@@ -27,10 +27,15 @@ class SendResponse extends Model implements Response
      */
     public function getData(): array
     {
-        return [
+        $data = [
             'id' => $this->id,
-            'count' => $this->cnt,
-            'status' => $this->phones[0]['status']
+            'count' => $this->cnt
         ];
+
+        if (array_key_exists('status', $this->phones[0])) {
+            $data['status'] = $this->phones[0]['status'];
+        }
+
+        return $data;
     }
 }
