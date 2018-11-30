@@ -32,8 +32,10 @@ class SendResponse extends Model implements Response
             'count' => $this->cnt
         ];
 
-        if (array_key_exists('status', $this->phones[0])) {
+        if (null !== $this->phones && array_key_exists('status', $this->phones[0])) {
             $data['status'] = $this->phones[0]['status'];
+        } else {
+            $data['status'] = null;
         }
 
         return $data;

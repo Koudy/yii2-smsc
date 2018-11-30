@@ -205,11 +205,14 @@ class SenderTest extends \PHPUnit\Framework\TestCase
 
         $responseData = ['::responase data::'];
 
+        $scenario = 'send';
+
         $sateOnly = false;
         $message = $this->createMock(Message::class);
         $message->method('getPhone')->willReturn($phone);
         $message->method('getText')->willReturn($text);
         $message->method('validate')->willReturn(true);
+        $message->expects(self::once())->method('setScenario')->with($scenario);
         $message->expects(self::once())->method('setAttributes')->with($responseData, $sateOnly);
 
         $sendRequest = $this->createMock(SendRequest::class);
@@ -331,10 +334,14 @@ class SenderTest extends \PHPUnit\Framework\TestCase
 
         $responseData = ['::response data::'];
 
+        $scenario = 'get status';
+
         $safeOnly = false;
         $message = $this->createMock(Message::class);
         $message->method('getId')->willReturn($id);
         $message->method('getPhone')->willReturn($phone);
+        $message->method('validate')->willReturn(true);
+        $message->expects(self::once())->method('setScenario')->with($scenario);
         $message->expects(self::once())->method('setAttributes')->with($responseData, $safeOnly);
 
         $getStatusRequest = $this->createMock(GetStatusRequest::class);
@@ -414,6 +421,23 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         Yii::$container->clear(GuzzleClient::class);
 
         $this->assertEquals($status, $message->getStatus());
+    }
+
+    /**
+     * @expectedException \Exception
+     * @expectedExceptionMessage Validation failed.
+     */
+    public function testGetStatusWhenMessageValidationIsFailed()
+    {
+        $message = $this->createMock(Message::class);
+        $message->method('validate')->willReturn(false);
+
+        $sender = $this
+            ->getMockBuilder(Sender::class)
+            ->disableOriginalConstructor()
+            ->setMethodsExcept(['getStatus'])
+            ->getMock();
+        $sender->getStatus($message);
     }
 
     private function getFaker()

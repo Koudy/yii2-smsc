@@ -20,6 +20,13 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($phone, $message->getPhone());
     }
 
+    public function testGetPhoneWhenItIsNull()
+    {
+        $message = new Message();
+
+        $this->assertNull($message->getPhone());
+    }
+
     public function testSetGetText()
     {
         $message = new Message();
@@ -29,6 +36,13 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($text, $message->getText());
     }
 
+    public function testGetTextWhenItIsNull()
+    {
+        $message = new Message();
+
+        $this->assertNull($message->getText());
+    }
+
     public function testSetGetId()
     {
         $message = new Message();
@@ -36,6 +50,27 @@ class MessageTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame($message, $message->setId($id));
         $this->assertEquals($id, $message->getId());
+    }
+
+    public function testGetIdWhenItIsNull()
+    {
+        $message = new Message();
+
+        $this->assertNull($message->getId());
+    }
+
+    public function testGetCountWhenItIsNull()
+    {
+        $message = new Message();
+
+        $this->assertNull($message->getCount());
+    }
+
+    public function testGetStatusWhenItIsNull()
+    {
+        $message = new Message();
+
+        $this->assertNull($message->getStatus());
     }
 
     public function testSetAttributes()
@@ -59,12 +94,27 @@ class MessageTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($status, $message->getStatus());
     }
 
-    public function testValidatePhoneWhenItIsEmpty()
+    // phone validation
+
+    /**
+     * @dataProvider scenariosProvider
+     * @param string $scenario
+     */
+    public function testValidatePhoneWhenItIsEmpty(string $scenario)
     {
         $message = new Message();
+        $message->scenario = $scenario;
 
         $this->assertFalse($message->validate('phone'));
         $this->assertEquals('Phone cannot be blank.', $message->getFirstError('phone'));
+    }
+
+    public function scenariosProvider()
+    {
+        return [
+            [Message::SCENARIO_SEND],
+            [Message::SCENARIO_GET_STATUS],
+        ];
     }
 
     /**
@@ -72,9 +122,25 @@ class MessageTest extends \PHPUnit\Framework\TestCase
      * @param $phone
      * @param string $errorMessage
      */
-    public function testValidatePhoneWhenOneWrongPhone($phone, string $errorMessage)
+    public function testValidatePhoneWhenOneWrongPhoneAndSendScenario($phone, string $errorMessage)
     {
         $message = new Message();
+        $message->scenario = Message::SCENARIO_SEND;
+        $message->phone = $phone;
+
+        $this->assertFalse($message->validate('phone'));
+        $this->assertEquals($errorMessage, $message->getFirstError('phone'));
+    }
+
+    /**
+     * @dataProvider wrongPhoneProvider
+     * @param $phone
+     * @param string $errorMessage
+     */
+    public function testValidatePhoneWhenOneWrongPhoneAndGetStatusScenario($phone, string $errorMessage)
+    {
+        $message = new Message();
+        $message->scenario = Message::SCENARIO_GET_STATUS;
         $message->phone = $phone;
 
         $this->assertFalse($message->validate('phone'));
@@ -97,9 +163,23 @@ class MessageTest extends \PHPUnit\Framework\TestCase
      * @dataProvider correctPhoneProvider
      * @param $phone
      */
-    public function testValidatePhoneWhenOneCorrectPhone($phone)
+    public function testValidatePhoneWhenOneCorrectPhoneAndSendScenario($phone)
     {
         $message = new Message();
+        $message->scenario = Message::SCENARIO_SEND;
+        $message->phone = $phone;
+
+        $this->assertTrue($message->validate('phone'));
+    }
+
+    /**
+     * @dataProvider correctPhoneProvider
+     * @param $phone
+     */
+    public function testValidatePhoneWhenOneCorrectPhoneAndGetStatusScenario($phone)
+    {
+        $message = new Message();
+        $message->scenario = Message::SCENARIO_GET_STATUS;
         $message->phone = $phone;
 
         $this->assertTrue($message->validate('phone'));
@@ -135,6 +215,44 @@ class MessageTest extends \PHPUnit\Framework\TestCase
             ['8(916)-123-45-67'],
             ['8 (916)-123-45-67'],
         ];
+    }
+
+    // text validation
+
+    public function testValidateTextWhenItIsEmptyAndSendScenario()
+    {
+        $message = new Message();
+        $message->scenario = Message::SCENARIO_SEND;
+
+        $this->assertFalse($message->validate('text'));
+        $this->assertEquals('Text cannot be blank.', $message->getFirstError('text'));
+    }
+
+    public function testValidateTextWhenItIsEmptyAndGetStatusScenario()
+    {
+        $message = new Message();
+        $message->scenario = Message::SCENARIO_GET_STATUS;
+
+        $this->assertTrue($message->validate('text'));
+    }
+
+    // id validation
+
+    public function testValidateIdWhenItIsEmptyAndSendScenario()
+    {
+        $message = new Message();
+        $message->scenario = Message::SCENARIO_SEND;
+
+        $this->assertTrue($message->validate('id'));
+    }
+
+    public function testValidateIdWhenItIsEmptyAndGetStatusScenario()
+    {
+        $message = new Message();
+        $message->scenario = Message::SCENARIO_GET_STATUS;
+
+        $this->assertFalse($message->validate('id'));
+        $this->assertEquals('Id cannot be blank.', $message->getFirstError('id'));
     }
 
     private function getFaker()

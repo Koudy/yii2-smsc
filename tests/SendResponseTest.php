@@ -15,7 +15,6 @@ class SendResponseTest extends \PHPUnit\Framework\TestCase
     {
         $id = '::id::';
         $count = $this->getFaker()->numberBetween(1, 1000);
-        $status = '::status::';
 
         $parsedResponse = [
             'id' => $id,
@@ -33,7 +32,8 @@ class SendResponseTest extends \PHPUnit\Framework\TestCase
 
         $expectedData = [
             'id' => $id,
-            'count' => $count
+            'count' => $count,
+            'status' => null
         ];
         $this->assertEquals($expectedData, $response->getData());
     }
@@ -64,6 +64,24 @@ class SendResponseTest extends \PHPUnit\Framework\TestCase
             'id' => $id,
             'count' => $count,
             'status' => $status
+        ];
+        $this->assertEquals($expectedData, $response->getData());
+    }
+
+    public function testGetDataWhenError()
+    {
+        $parsedResponse = [
+            'error' => 'описание',
+            'error_code' => 'N'
+        ];
+
+        $response = new SendResponse();
+        $response->setAttributes($parsedResponse, false);
+
+        $expectedData = [
+            'id' => null,
+            'count' => null,
+            'status' => null
         ];
         $this->assertEquals($expectedData, $response->getData());
     }

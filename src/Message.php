@@ -7,8 +7,12 @@ use yii\base\Model;
 
 class Message extends Model
 {
+    const SCENARIO_SEND = 'send';
+
+    const SCENARIO_GET_STATUS = 'get status';
+
     /**
-     * @var string|array
+     * @var string
      */
     private $phone;
 
@@ -36,15 +40,25 @@ class Message extends Model
     {
         return [
             ['phone', 'required'],
-            ['phone', PhoneNumberValidator::class, 'country' => 'RU']
+            ['phone', PhoneNumberValidator::class, 'country' => 'RU'],
+            ['text', 'required', 'on' => self::SCENARIO_SEND],
+            ['id', 'required', 'on' => self::SCENARIO_GET_STATUS]
+        ];
+    }
+
+    public function scenarios()
+    {
+        return [
+            self::SCENARIO_SEND => ['phone', 'text'],
+            self::SCENARIO_GET_STATUS => ['id', 'phone']
         ];
     }
 
     /**
-     * @param $phone
+     * @param string $phone
      * @return Message
      */
-    public function setPhone($phone): Message
+    public function setPhone(string $phone): Message
     {
         $this->phone = $phone;
 
@@ -52,9 +66,9 @@ class Message extends Model
     }
 
     /**
-     * @return array|string
+     * @return string|null
      */
-    public function getPhone()
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
@@ -71,9 +85,9 @@ class Message extends Model
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getText(): string
+    public function getText(): ?string
     {
         return $this->text;
     }
@@ -90,9 +104,9 @@ class Message extends Model
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }

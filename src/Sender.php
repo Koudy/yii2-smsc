@@ -97,6 +97,7 @@ class Sender extends Component
      */
     public function send(Message $message)
     {
+        $message->setScenario(Message::SCENARIO_SEND);
         if (!$message->validate()) {
             throw new \Exception('Validation failed.');
         }
@@ -117,6 +118,11 @@ class Sender extends Component
      */
     public function getStatus(Message $message)
     {
+        $message->setScenario(Message::SCENARIO_GET_STATUS);
+        if (!$message->validate()) {
+            throw new \Exception('Validation failed.');
+        }
+
         $request = $this->getStatusFactory->createRequest(
             $message->getId(),
             $message->getPhone(),
