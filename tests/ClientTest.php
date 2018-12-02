@@ -155,6 +155,8 @@ class ClientTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->assertSame($response, $client->sendRequest($url, $request, $responseFactory));
+        $this->assertContains($requestParams, Yii::getLogger()->messages[0]);
+        $this->assertContains($rawResponse, Yii::getLogger()->messages[1]);
     }
 
     /**

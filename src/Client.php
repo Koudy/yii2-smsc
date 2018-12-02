@@ -43,11 +43,13 @@ class Client extends Component
 
     public function sendRequest(string $url, Request $request, ResponseFactory $responseFactory): Response
     {
+        $requestParams = $request->getRequestParams();
         $this->trigger(self::EVENT_BEFORE_SENDING);
+        Yii::info($requestParams);
 
         try {
             $guzzleResponse = $this->guzzleClient->request('POST', $url . $request->getMethod(), [
-                'form_params' => $request->getRequestParams()
+                'form_params' => $requestParams
             ]);
         } catch (\Exception $exception) {
             throw new ClientException($exception->getMessage());
@@ -55,9 +57,10 @@ class Client extends Component
 
         $this->trigger(self::EVENT_AFTER_SENDING);
 
-        $parsedResponse = $this->parser->parse($guzzleResponse->getBody()->getContents());
+        $rawResponse = $guzzleResponse->getBody()->getContents();
+        Yii::info($rawResponse);
+        $parsedResponse = $this->parser->parse($rawResponse);
 
         return $responseFactory->createResponse($parsedResponse);
-
     }
 }
