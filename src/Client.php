@@ -19,6 +19,11 @@ class Client extends Component
     const EVENT_AFTER_SENDING = 'after sending';
 
     /**
+     * @var MessageSaver
+     */
+    private $messageSaver;
+
+    /**
      * @var GuzzleClient
      */
     public $guzzleClient = GuzzleClient::class;
@@ -27,6 +32,18 @@ class Client extends Component
      * @var Parser
      */
     public $parser = Parser::class;
+
+    /**
+     * Client constructor.
+     * @param MessageSaver $messageSaver
+     * @param array $config
+     */
+    public function __construct(MessageSaver $messageSaver, array $config = [])
+    {
+        $this->messageSaver = $messageSaver;
+
+        parent::__construct($config);
+    }
 
     /**
      * @inheritdoc
@@ -41,23 +58,41 @@ class Client extends Component
         $this->parser = Instance::ensure($this->parser, Parser::class);
     }
 
-    public function sendRequest(string $url, Request $request, ResponseFactory $responseFactory): Response
+    public function sendRequest(
+        string $url,
+        Request $request,
+        ResponseFactory $responseFactory,
+        bool $useFileTransport = false,
+        string $fileTransportPath = null,
+        string $fileName = null
+    ): Response
     {
         $requestParams = $request->getRequestParams();
         $this->trigger(self::EVENT_BEFORE_SENDING);
         Yii::info($requestParams);
 
+        $rawResponse = null;
+
         try {
-            $guzzleResponse = $this->guzzleClient->request('POST', $url . $request->getMethod(), [
-                'form_params' => $requestParams
-            ]);
+            if ($useFileTransport) {
+                $rawResponse = $this->messageSaver->save(
+                    $request->getMethod(),
+                    $requestParams,
+                    $fileTransportPath,
+                    $fileName
+                );
+            } else {
+                $guzzleResponse = $this->guzzleClient->request('POST', $url . $request->getMethod(), [
+                    'form_params' => $requestParams
+                ]);
+                $rawResponse = $guzzleResponse->getBody()->getContents();
+            }
         } catch (\Exception $exception) {
             throw new ClientException($exception->getMessage());
         }
 
         $this->trigger(self::EVENT_AFTER_SENDING);
 
-        $rawResponse = $guzzleResponse->getBody()->getContents();
         Yii::info($rawResponse);
         $parsedResponse = $this->parser->parse($rawResponse);
 

@@ -8,6 +8,10 @@ interface Request
 
     const CHARSET = 'utf-8';
 
+    const METHOS_SEND = 'send.php';
+
+    const METHOS_GET_STATUS = 'status.php';
+
     /**
      * @return array
      */

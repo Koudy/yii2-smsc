@@ -181,6 +181,24 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('https://smsc.ru/sys/', $sender->url);
     }
 
+    public function testDefaultUseFileTransport()
+    {
+        $sender = $this->createMock(Sender::class);
+        $this->assertFalse($sender->useFileTransport);
+    }
+
+    public function testDefaultFileTransportPath()
+    {
+        $sender = $this->createMock(Sender::class);
+        $this->assertEquals('@runtime/smsc', $sender->fileTransportPath);
+    }
+
+    public function testDefaultFileName()
+    {
+        $sender = $this->createMock(Sender::class);
+        $this->assertEquals('message.txt', $sender->fileName);
+    }
+
     public function testCreateMessage()
     {
         $sender = $this->getMockBuilder(Sender::class)
@@ -202,6 +220,10 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $password = '::password::';
 
         $url = '::url::/';
+
+        $useFileTransport = $this->getFaker()->boolean;
+        $fileTransportPath = '::file transport path::';
+        $fileName = '::file name::';
 
         $responseData = ['::responase data::'];
 
@@ -227,13 +249,23 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $response->method('getData')->willReturn($responseData);
 
         $client = $this->createMock(Client::class);
-        $client->method('sendRequest')->with($url, $sendRequest, $sendFactory)->willReturn($response);
+        $client->method('sendRequest')->with(
+            $url,
+            $sendRequest,
+            $sendFactory,
+            $useFileTransport,
+            $fileTransportPath,
+            $fileName
+        )->willReturn($response);
 
         $senderConfig = [
             'login' => $login,
             'password' => $password,
             'url' => $url,
-            'client' => $client
+            'client' => $client,
+            'useFileTransport' => $useFileTransport,
+            'fileTransportPath' => $fileTransportPath,
+            'fileName' => $fileName
         ];
 
         $getStatusFactory = $this->createMock(GetStatusFactory::class);
@@ -332,6 +364,10 @@ class SenderTest extends \PHPUnit\Framework\TestCase
 
         $url = '::url::/';
 
+        $useFileTransport = $this->getFaker()->boolean;
+        $fileTransportPath = '::file transport path::';
+        $fileName = '::file name::';
+
         $responseData = ['::response data::'];
 
         $scenario = 'get status';
@@ -356,13 +392,23 @@ class SenderTest extends \PHPUnit\Framework\TestCase
         $response->method('getData')->willReturn($responseData);
 
         $client = $this->createMock(Client::class);
-        $client->method('sendRequest')->with($url, $getStatusRequest, $getStatusFactory)->willReturn($response);
+        $client->method('sendRequest')->with(
+            $url,
+            $getStatusRequest,
+            $getStatusFactory,
+            $useFileTransport,
+            $fileTransportPath,
+            $fileName
+        )->willReturn($response);
 
         $senderConfig = [
             'login' => $login,
             'password' => $password,
             'url' => $url,
-            'client' => $client
+            'client' => $client,
+            'useFileTransport' => $useFileTransport,
+            'fileTransportPath' => $fileTransportPath,
+            'fileName' => $fileName
         ];
 
         $sendRequestFactory = $this->createMock(SendFactory::class);

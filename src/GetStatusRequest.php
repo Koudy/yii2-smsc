@@ -57,6 +57,6 @@ class GetStatusRequest implements interfaces\Request
      */
     public function getMethod(): string
     {
-        return 'status.php';
+        return self::METHOS_GET_STATUS;
     }
 }

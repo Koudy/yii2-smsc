@@ -41,6 +41,21 @@ class Sender extends Component
     public $url = 'https://smsc.ru/sys/';
 
     /**
+     * @var bool
+     */
+    public $useFileTransport = false;
+
+    /**
+     * @var string
+     */
+    public $fileTransportPath = '@runtime/smsc';
+
+    /**
+     * @var string
+     */
+    public $fileName = 'message.txt';
+
+    /**
      * Sender constructor.
      * @param SendFactory $responseFactory
      * @param GetStatusFactory $getStatusRequestFactory
@@ -109,7 +124,13 @@ class Sender extends Component
             $this->password
         );
 
-        $this->sendRequest($message, $request, $this->sendFactory);
+        $this->sendRequest($message,
+            $request,
+            $this->sendFactory,
+            $this->useFileTransport,
+            $this->fileTransportPath,
+            $this->fileName
+        );
     }
 
     /**
@@ -130,18 +151,42 @@ class Sender extends Component
             $this->password
         );
 
-        $this->sendRequest($message, $request, $this->getStatusFactory);
+        $this->sendRequest(
+            $message,
+            $request,
+            $this->getStatusFactory,
+            $this->useFileTransport,
+            $this->fileTransportPath,
+            $this->fileName
+        );
     }
 
     /**
      * @param Message $message
      * @param Request $request
      * @param ResponseFactory $responseFactory
+     * @param bool $useFileTransport
+     * @param string $fileTransportPath
+     * @param string $fileName
      * @throws exceptions\ClientException
      */
-    private function sendRequest(Message $message, Request $request, ResponseFactory $responseFactory)
+    private function sendRequest(
+        Message $message,
+        Request $request,
+        ResponseFactory $responseFactory,
+        bool $useFileTransport,
+        string $fileTransportPath,
+        string $fileName
+    )
     {
-        $response = $this->client->sendRequest($this->url, $request, $responseFactory);
+        $response = $this->client->sendRequest(
+            $this->url,
+            $request,
+            $responseFactory,
+            $useFileTransport,
+            $fileTransportPath,
+            $fileName
+        );
 
         $sateOnly = false;
         $message->setAttributes($response->getData(), $sateOnly);

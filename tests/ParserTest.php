@@ -7,8 +7,8 @@ class ParserTest extends \PHPUnit\Framework\TestCase
 {
 	public function testInheritance()
 	{
-		$sender = new Parser();
-		$this->assertInstanceOf(Component::class, $sender);
+		$parser = new Parser();
+		$this->assertInstanceOf(Component::class, $parser);
 	}
 
 	public function testParse()

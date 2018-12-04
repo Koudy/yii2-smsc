@@ -61,6 +61,6 @@ class SendRequest implements interfaces\Request
      */
     public function getMethod(): string
     {
-        return 'send.php';
+        return self::METHOS_SEND;
     }
 }
