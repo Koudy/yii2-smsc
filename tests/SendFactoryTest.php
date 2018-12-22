@@ -23,9 +23,12 @@ class SendFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf(SendRequest::class, $request);
 
-        $requestParams = [
+        $authorizationData = [
             'login' => $login,
-            'psw' => $password,
+            'psw' => $password
+        ];
+
+        $requestParams = [
             'phones' => $phone,
             'mes' => $text,
             'fmt' => $responseJsonFormat,
@@ -33,6 +36,7 @@ class SendFactoryTest extends \PHPUnit\Framework\TestCase
             'charset' => $charset
         ];
 
+        $this->assertEquals($authorizationData, $request->getAuthorizationData());
         $this->assertEquals($requestParams, $request->getRequestParams());
     }
 

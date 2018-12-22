@@ -4,6 +4,24 @@ use koudy\yii2\smsc\GetStatusRequest;
 
 class GetStatusRequestTest extends \PHPUnit\Framework\TestCase
 {
+    public function testGetAuthorizationData()
+    {
+        $id = '::id::';
+        $phone = '::phone::';
+
+        $login = '::login::';
+        $password = '::password::';
+
+        $request = new GetStatusRequest($id, $phone, $login, $password);
+
+        $authorizationData = [
+            'login' => $login,
+            'psw' => $password
+        ];
+
+        $this->assertEquals($authorizationData, $request->getAuthorizationData());
+    }
+
     public function testGetRequestParams()
     {
         $id = '::id::';
@@ -18,8 +36,6 @@ class GetStatusRequestTest extends \PHPUnit\Framework\TestCase
         $request = new GetStatusRequest($id, $phone, $login, $password);
 
         $requestParams = [
-            'login' => $login,
-            'psw' => $password,
             'id' => $id,
             'phone' => $phone,
             'fmt' => $responseJsonFormat,

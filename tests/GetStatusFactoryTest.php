@@ -22,15 +22,19 @@ class GetStatusFactoryTest extends \PHPUnit\Framework\TestCase
 
         $this->assertInstanceOf(GetStatusRequest::class, $request);
 
-        $requestParams = [
+        $authorizationData = [
             'login' => $login,
-            'psw' => $password,
+            'psw' => $password
+        ];
+
+        $requestParams = [
             'id' => $id,
             'phone' => $phone,
             'fmt' => $responseJsonFormat,
             'charset' => $charset
         ];
 
+        $this->assertEquals($authorizationData, $request->getAuthorizationData());
         $this->assertEquals($requestParams, $request->getRequestParams());
     }
 

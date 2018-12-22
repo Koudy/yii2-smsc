@@ -2,7 +2,7 @@
 
 namespace koudy\yii2\smsc;
 
-class SendRequest implements interfaces\Request
+class SendRequest extends Request implements interfaces\Request
 {
     //Признак необходимости добавления в ответ сервера информации по каждому номеру.
     const OP = 1;
@@ -18,15 +18,12 @@ class SendRequest implements interfaces\Request
     private $text;
 
     /**
-     * @var string
+     * SendRequest constructor.
+     * @param $phone
+     * @param string $text
+     * @param string $login
+     * @param string $password
      */
-    private $login;
-
-    /**
-     * @var string
-     */
-    private $password;
-
     public function __construct(
         $phone,
         string $text,
@@ -36,8 +33,8 @@ class SendRequest implements interfaces\Request
     {
         $this->phone = $phone;
         $this->text = $text;
-        $this->login = $login;
-        $this->password = $password;
+
+        parent::__construct($login, $password);
     }
 
     /**
@@ -46,8 +43,6 @@ class SendRequest implements interfaces\Request
     public function getRequestParams(): array
     {
         return [
-            'login' => $this->login,
-            'psw' => $this->password,
             'phones' => $this->phone,
             'mes' => $this->text,
             'fmt' => self::RESPONSE_JSON_FORMAT,

@@ -83,7 +83,7 @@ class Client extends Component
                 );
             } else {
                 $guzzleResponse = $this->guzzleClient->request('POST', $url . $request->getMethod(), [
-                    'form_params' => $requestParams
+                    'form_params' => array_merge($request->getAuthorizationData(), $requestParams)
                 ]);
                 $rawResponse = $guzzleResponse->getBody()->getContents();
             }

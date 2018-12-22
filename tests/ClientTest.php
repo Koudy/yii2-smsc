@@ -100,14 +100,16 @@ class ClientTest extends \PHPUnit\Framework\TestCase
     {
         $url = '::url::';
         $method = '::method::';
+        $authorizationData = ['::authorization data::'];
         $requestParams = ['::params::'];
         $rawResponse = '::raw response::';
         $request = $this->createMock(Request::class);
         $request->method('getMethod')->willReturn($method);
+        $request->method('getAuthorizationData')->willReturn($authorizationData);
         $request->method('getRequestParams')->willReturn($requestParams);
 
         $guzzleRequestParams = [
-            'form_params' => $requestParams
+            'form_params' => array_merge($authorizationData, $requestParams)
         ];
 
         $parsedResponse = ['::parsed response::'];

@@ -4,6 +4,24 @@ use koudy\yii2\smsc\SendRequest;
 
 class SendRequestTest extends \PHPUnit\Framework\TestCase
 {
+    public function testGetAuthorizationData()
+    {
+        $phone = '::phone::';
+        $text = '::text::';
+
+        $login = '::login::';
+        $password = '::password::';
+
+        $request = new SendRequest($phone, $text, $login, $password);
+
+        $authorizationData = [
+            'login' => $login,
+            'psw' => $password
+        ];
+
+        $this->assertEquals($authorizationData, $request->getAuthorizationData());
+    }
+
     public function testGetRequestParams()
     {
         $phone = '::phone::';
@@ -19,8 +37,6 @@ class SendRequestTest extends \PHPUnit\Framework\TestCase
         $request = new SendRequest($phone, $text, $login, $password);
 
         $requestParams = [
-            'login' => $login,
-            'psw' => $password,
             'phones' => $phone,
             'mes' => $text,
             'fmt' => $responseJsonFormat,

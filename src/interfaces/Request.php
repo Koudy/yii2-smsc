@@ -15,6 +15,11 @@ interface Request
     /**
      * @return array
      */
+    public function getAuthorizationData(): array;
+
+    /**
+     * @return array
+     */
     public function getRequestParams(): array;
 
     /**
